@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 board = { path = "../board" }
+movegen = { path = "../movegen" }
