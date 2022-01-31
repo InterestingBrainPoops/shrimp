@@ -4,13 +4,14 @@ use serde::Deserialize;
 
 use crate::small::{SmallBattlesnake, SmallRequest};
 
+/// Input a game request
 #[derive(Clone, Debug, Deserialize)]
 pub struct GameRequest {
     turn: i64,
     board: BoardInfo,
     you: BattleSnake,
 }
-
+/// The board info itself
 #[derive(Clone, Debug, Deserialize)]
 struct BoardInfo {
     height: u8,
@@ -19,6 +20,8 @@ struct BoardInfo {
     hazards: Vec<Coordinate>,
     snakes: Vec<BattleSnake>,
 }
+
+/// A battlesnake
 #[derive(Clone, Debug, Deserialize)]
 struct BattleSnake {
     id: String,
@@ -27,9 +30,13 @@ struct BattleSnake {
     head: Coordinate,
     length: u16,
 }
+
+/// A coordinate
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq)]
 pub struct Coordinate {
+    /// x coordinate
     pub x: i32,
+    /// y coordinate
     pub y: i32,
 }
 

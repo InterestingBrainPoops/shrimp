@@ -1,4 +1,6 @@
+/// Generate move functions
 pub mod genmove;
+/// Make and unmake move functions
 pub mod makeunmake;
 #[cfg(test)]
 mod tests {
@@ -125,7 +127,7 @@ mod tests {
             }
         } else {
             for x in state.all_snake_moves(you_move.unwrap()) {
-                let t0 = state.clone();
+                // let t0 = state.clone();
                 let delta = state.make_move(x);
                 perft(state, depth - 1, !player, None);
                 state.unmake_move(&delta);

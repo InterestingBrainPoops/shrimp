@@ -2,7 +2,11 @@ use crate::makeunmake::Move;
 use board::{board::Coordinate, small::SmallRequest};
 use permutator::copy::cartesian_product;
 pub trait GenMove {
+    /// Get valid moves for a given snake
+    /// By valid that means it doesn't cause an instant death.
     fn snake_moves(&self, id: usize) -> Vec<Move>;
+    /// Generate a 2D vector of moves for all snakes
+    /// This should be given the move predetermined move for the "you" player
     fn all_snake_moves(&self, predet_move: Move) -> Vec<Vec<Move>>;
 }
 
