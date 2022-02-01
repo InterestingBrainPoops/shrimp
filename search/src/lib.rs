@@ -1,2 +1,2 @@
-mod search;
+pub mod search;
 mod table;

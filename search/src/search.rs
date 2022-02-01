@@ -6,9 +6,10 @@ use movegen::{
 };
 
 pub struct Evaluation {
-    score: i32,
-    direction: Option<Direction>,
+    pub score: i32,
+    pub direction: Option<Direction>,
 }
+
 pub trait Search {
     fn minimax(
         &mut self,

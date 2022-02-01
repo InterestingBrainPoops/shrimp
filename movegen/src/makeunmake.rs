@@ -226,3 +226,13 @@ impl Into<Coordinate> for Direction {
         }
     }
 }
+impl Direction {
+    pub fn to_string(&self) -> &str {
+        match self {
+            Direction::Up => "up",
+            Direction::Down => "down",
+            Direction::Left => "left",
+            Direction::Right => "right",
+        }
+    }
+}

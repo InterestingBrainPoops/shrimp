@@ -4,7 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dev-dependencies]
+pretty_assertions = "1"
+serde = {version = "1.0.133", features = ["derive"]}
+serde_json = { version = "1.0"}
 
 [dependencies]
 board = {path = "../board"}
 permutator = "0.4.3"
+

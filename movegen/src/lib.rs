@@ -11,6 +11,7 @@ mod tests {
 
     use crate::genmove::GenMove;
     use crate::makeunmake::{MakeUnmake, Move};
+    use pretty_assertions::assert_eq;
     #[test]
     fn it_works() {
         let result = 2 + 2;
@@ -19,10 +20,6 @@ mod tests {
 
     #[test]
     fn perft_food_test() {
-        // println!(
-        //     "{}",
-        //     env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\food.json"
-        // );
         // get file
         let contents =
             fs::read_to_string(env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\food.json")

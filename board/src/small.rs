@@ -15,6 +15,7 @@ pub struct SmallRequest {
 /// The board info with stripped out uselsess info
 #[derive(Clone, Debug)]
 pub struct SmallBoard {
+    /// zobrist hash
     pub zobrist: u64,
     /// height of board in cells
     pub height: u8,

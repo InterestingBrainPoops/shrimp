@@ -7,7 +7,7 @@ use crate::small::{SmallBattlesnake, SmallRequest};
 /// Input a game request
 #[derive(Clone, Debug, Deserialize)]
 pub struct GameRequest {
-    turn: i64,
+    pub turn: i64,
     board: BoardInfo,
     you: BattleSnake,
 }
