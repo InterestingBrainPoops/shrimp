@@ -50,7 +50,7 @@ impl GenMove for SmallRequest {
                     break;
                 } // remove the move if the head is the same as the new head pos, and the other length is bigger or equal to my length
 
-                if snake.body[1..].contains(&new_pos) {
+                if snake.body[1..((snake.length - 1) as usize)].contains(&new_pos) {
                     removed = true;
                     break;
                 } // remove if the head is in the other
