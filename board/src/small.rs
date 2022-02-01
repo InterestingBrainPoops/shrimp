@@ -15,6 +15,7 @@ pub struct SmallRequest {
 /// The board info with stripped out uselsess info
 #[derive(Clone, Debug)]
 pub struct SmallBoard {
+    pub zobrist: u64,
     /// height of board in cells
     pub height: u8,
     /// width of board in cells
@@ -57,6 +58,7 @@ impl SmallRequest {
         SmallRequest {
             turn: 0,
             board: SmallBoard {
+                zobrist: 0,
                 height: 0,
                 width: 0,
                 food: vec![],

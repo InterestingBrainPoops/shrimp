@@ -128,7 +128,7 @@ mod tests {
         } else {
             for x in state.all_snake_moves(you_move.unwrap()) {
                 // let t0 = state.clone();
-                let delta = state.make_move(x);
+                let delta = state.make_move(&x);
                 perft(state, depth - 1, !player, None);
                 state.unmake_move(&delta);
                 // assert_eq!(state.board.snakes, t0.board.snakes);

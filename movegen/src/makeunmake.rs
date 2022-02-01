@@ -13,7 +13,7 @@ pub struct Delta {
 /// Make and unmake move trait
 pub trait MakeUnmake {
     /// Advance a state given a set of moves for each and all snakes
-    fn make_move(&mut self, moves: Vec<Move>) -> Delta;
+    fn make_move(&mut self, moves: &Vec<Move>) -> Delta;
     /// Unmake a move given the delta of non-mirror moves
     fn unmake_move(&mut self, delta: &Delta);
 }
@@ -169,14 +169,14 @@ impl Helpers for SmallRequest {
     }
 }
 impl MakeUnmake for SmallRequest {
-    fn make_move(&mut self, moves: Vec<Move>) -> Delta {
+    fn make_move(&mut self, moves: &Vec<Move>) -> Delta {
         let mut out = Delta {
             eaten_food: vec![],
             died: vec![],
             prev_health: vec![],
             tails: vec![],
         };
-        self.move_snakes(&moves, &mut out);
+        self.move_snakes(moves, &mut out);
 
         self.reduce_health();
 

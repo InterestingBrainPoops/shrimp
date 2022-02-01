@@ -4,4 +4,6 @@ members = [
     "engine",
     "board",
     "movegen",
+    "search",
+    "evaluation",
 ]
