@@ -67,6 +67,12 @@ impl GenMove for SmallRequest {
                 out.push(*mov);
             }
         }
+        if (out.len() == 0) {
+            return vec![Move {
+                direction: crate::makeunmake::Direction::Up,
+                id: id as u8,
+            }];
+        }
         out
     }
 
