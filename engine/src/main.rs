@@ -29,6 +29,7 @@ fn handle_start(start_req: Json<GameRequest>) -> Status {
 
 #[post("/move", format = "json", data = "<move_req>")]
 fn handle_move(move_req: Json<GameRequest>) -> JsonValue {
+    // println!("e");
     let eval = move_req
         .into_small()
         .minimax(2, i32::MIN, i32::MAX, true, None);

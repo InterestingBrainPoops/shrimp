@@ -30,12 +30,22 @@ impl Search for SmallRequest {
         maximizing: bool,
         you_move: Option<Move>,
     ) -> Evaluation {
-        if !self.board.snakes[self.you].alive {
+        // println!("f");
+        if self.amount_alive() as usize == 0 {
+            // noone is alive
+            return Evaluation {
+                score: 0,
+                direction: None,
+            };
+        } else if !self.board.snakes[self.you].alive {
+            // im not alive
             return Evaluation {
                 score: i32::MIN,
                 direction: None,
             };
-        } else if self.board.snakes.len() - self.amount_alive() as usize == 0 {
+        } else if self.amount_alive() as usize == 1 {
+            // im the only one left
+            println!("fg");
             return Evaluation {
                 score: i32::MAX,
                 direction: None,
