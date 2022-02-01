@@ -44,7 +44,7 @@ fn handle_end(end_req: Json<GameRequest>) -> Status {
 
 fn main() {
     let address = "0.0.0.0";
-    let env_port = "8080";
+    let env_port = "8000";
     let port = env_port.parse::<u16>().unwrap();
 
     let config = Config::build(Environment::Development)
