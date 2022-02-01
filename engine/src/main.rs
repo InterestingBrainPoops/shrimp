@@ -33,7 +33,10 @@ fn handle_move(move_req: Json<GameRequest>) -> JsonValue {
     let eval = move_req
         .into_small()
         .minimax(2, i32::MIN, i32::MAX, true, None);
-    println!("turn: {},score: {:?}", move_req.turn, eval.direction);
+    println!(
+        "turn: {},score: {}, direction : {:?}",
+        move_req.turn, eval.score, eval.direction
+    );
     return json!({ "move":  eval.direction.unwrap().to_string()});
 }
 
