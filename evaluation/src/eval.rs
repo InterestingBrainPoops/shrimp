@@ -6,6 +6,6 @@ pub trait StaticEval {
 
 impl StaticEval for SmallRequest {
     fn static_eval(&self) -> i32 {
-        todo!();
+        (self.board.snakes[self.you].length) as i32 * 10
     }
 }
