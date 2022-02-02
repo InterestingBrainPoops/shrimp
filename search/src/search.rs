@@ -64,14 +64,13 @@ impl Search for SmallRequest {
             let mut out = Direction::Up;
 
             for current_move in self.snake_moves(self.you) {
-                let eval = self.minimax(depth - 1, alpha, beta, !maximizing, Some(current_move));
-
+                let eval = self.minimax(depth, alpha, beta, !maximizing, Some(current_move));
                 if value < eval.score {
                     out = current_move.direction;
                     value = eval.score;
                 }
                 if value >= beta {
-                    break;
+                    // break;
                 }
                 alpha = alpha.max(value);
             }
@@ -94,7 +93,7 @@ impl Search for SmallRequest {
                     value = eval.score;
                 }
                 if value <= alpha {
-                    break;
+                    // break;
                 }
                 beta = beta.min(value);
             }
