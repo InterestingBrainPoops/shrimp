@@ -70,7 +70,7 @@ impl Search for SmallRequest {
                     value = eval.score;
                 }
                 if value >= beta {
-                    // break;
+                    break;
                 }
                 alpha = alpha.max(value);
             }
@@ -93,7 +93,7 @@ impl Search for SmallRequest {
                     value = eval.score;
                 }
                 if value <= alpha {
-                    // break;
+                    break;
                 }
                 beta = beta.min(value);
             }
