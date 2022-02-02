@@ -139,6 +139,7 @@ name = "engine"
 version = "0.1.0"
 dependencies = [
  "board",
+ "movegen",
  "rocket",
  "rocket_contrib",
  "search",

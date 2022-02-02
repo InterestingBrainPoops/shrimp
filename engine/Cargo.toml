@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 board = { path = "../board" }
 search = { path = "../search" }
+movegen = {path = "../movegen"}
 rocket = { version = "0.4.10", default-features = false }
 serde = { version = "1.0.117", features = ["derive"] }
 serde_json = "1.0.59"

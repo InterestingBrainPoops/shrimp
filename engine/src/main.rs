@@ -4,9 +4,9 @@
 extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
-
 use board::board::GameRequest;
 use board::small::SmallRequest;
+use movegen::genmove::*;
 use rocket::config::{Config, Environment};
 use rocket::http::Status;
 use rocket_contrib::json::{Json, JsonValue};
@@ -32,6 +32,7 @@ fn handle_move(move_req: Json<GameRequest>) -> JsonValue {
     // println!("e");
     let mut small = move_req.into_small();
     let t0 = small.clone();
+    println!("{:?}", t0.snake_moves(t0.you));
     let eval = small.minimax(15, i32::MIN, i32::MAX, true, None);
     assert!(small
         .board
