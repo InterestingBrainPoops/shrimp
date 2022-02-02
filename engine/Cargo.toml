@@ -12,6 +12,8 @@ movegen = {path = "../movegen"}
 rocket = { version = "0.4.10", default-features = false }
 serde = { version = "1.0.117", features = ["derive"] }
 serde_json = "1.0.59"
+pretty_assertions = "1"
+
 
 [dependencies.rocket_contrib]
 version = "0.4.10"

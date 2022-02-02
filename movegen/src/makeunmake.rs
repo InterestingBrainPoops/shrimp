@@ -187,6 +187,10 @@ impl MakeUnmake for SmallRequest {
         out
     }
     fn unmake_move(&mut self, delta: &Delta) {
+        // put food back
+        for food in &delta.eaten_food {
+            self.board.food.push(food.clone());
+        }
         // bring back the dead
         for id in &delta.died {
             self.board.snakes[*id as usize].alive = true;

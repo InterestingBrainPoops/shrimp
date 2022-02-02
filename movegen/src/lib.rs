@@ -28,13 +28,11 @@ mod tests {
         let seralized: GameRequest = serde_json::from_str(&contents).expect("Invalid json");
         let mut small = seralized.into_small();
         // run perft depth 4
-        let t0 = small.clone();
+        let mut t0 = small.clone();
         perft(&mut small, 5, true, None);
-        assert!(small
-            .board
-            .food
-            .iter()
-            .all(|item| t0.board.food.contains(item)));
+        t0.board.food.sort();
+        small.board.food.sort();
+        assert_eq!(t0.board.food, small.board.food);
     }
     #[test]
     fn perft_wall_collision_test() {
@@ -51,14 +49,11 @@ mod tests {
         let mut small = seralized.into_small();
         // println!("{:?}", small);
         // run perft depth 4
-        let t0 = small.clone();
+        let mut t0 = small.clone();
         perft(&mut small, 5, true, None);
-        // println!("{}, {}", small.board.snakes.len(), t0.board.snakes.len());
-        assert!(small
-            .board
-            .food
-            .iter()
-            .all(|item| t0.board.food.contains(item)));
+        t0.board.food.sort();
+        small.board.food.sort();
+        assert_eq!(t0.board.food, small.board.food);
         assert_eq!(small.board.snakes, t0.board.snakes);
     }
     #[test]
@@ -76,14 +71,11 @@ mod tests {
         let mut small = seralized.into_small();
         // println!("{:?}", small);
         // run perft depth 4
-        let t0 = small.clone();
+        let mut t0 = small.clone();
         perft(&mut small, 5, true, None);
-        // println!("{}, {}", small.board.snakes.len(), t0.board.snakes.len());
-        assert!(small
-            .board
-            .food
-            .iter()
-            .all(|item| t0.board.food.contains(item)));
+        t0.board.food.sort();
+        small.board.food.sort();
+        assert_eq!(t0.board.food, small.board.food);
         assert_eq!(small.board.snakes, t0.board.snakes);
     }
     #[test]
@@ -101,14 +93,11 @@ mod tests {
         let mut small = seralized.into_small();
         // println!("{:?}", small);
         // run perft depth 4
-        let t0 = small.clone();
+        let mut t0 = small.clone();
         perft(&mut small, 5, true, None);
-        // println!("{}, {}", small.board.snakes.len(), t0.board.snakes.len());
-        assert!(small
-            .board
-            .food
-            .iter()
-            .all(|item| t0.board.food.contains(item)));
+        t0.board.food.sort();
+        small.board.food.sort();
+        assert_eq!(t0.board.food, small.board.food);
         assert_eq!(small.board.snakes, t0.board.snakes);
     }
 

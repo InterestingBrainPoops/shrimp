@@ -140,6 +140,7 @@ version = "0.1.0"
 dependencies = [
  "board",
  "movegen",
+ "pretty_assertions",
  "rocket",
  "rocket_contrib",
  "search",

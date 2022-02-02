@@ -4,9 +4,11 @@
 extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
+
 use board::board::GameRequest;
 use board::small::SmallRequest;
 use movegen::genmove::*;
+use pretty_assertions::assert_eq;
 use rocket::config::{Config, Environment};
 use rocket::http::Status;
 use rocket_contrib::json::{Json, JsonValue};
@@ -31,15 +33,18 @@ fn handle_start(start_req: Json<GameRequest>) -> Status {
 fn handle_move(move_req: Json<GameRequest>) -> JsonValue {
     // println!("e");
     let mut small = move_req.into_small();
-    let t0 = small.clone();
+    let mut t0 = small.clone();
     println!("{:?}", t0.snake_moves(t0.you));
     let eval = small.minimax(5, i32::MIN, i32::MAX, true, None);
-    assert!(small
-        .board
-        .food
-        .iter()
-        .all(|item| t0.board.food.contains(item)));
-    assert_eq!(small.board.snakes, t0.board.snakes);
+    // assert!(t0
+    // .board
+    // .food
+    // .iter()
+    // .all(|item| small.board.food.contains(item)));
+    // t0.board.food.sort();
+    // small.board.food.sort();
+    // pretty_assertions::assert_eq!(t0.board.food, small.board.food);
+    // assert_eq!(small.board.snakes, t0.board.snakes);
     println!(
         "turn: {},score: {}, direction : {:?}",
         move_req.turn, eval.score, eval.direction
