@@ -13,7 +13,7 @@ impl StaticEval for SmallRequest {
         let mut dist_food = i32::MAX;
         let you_head = self.board.snakes[self.you].head.clone();
         for food in &self.board.food {
-            if manhattan_dist(&you_head, food) < dist_food {
+            if manhattan_dist(&self.board.snakes[self.you].body[0], food) < dist_food {
                 dist_food = manhattan_dist(&you_head, food);
             }
         }
