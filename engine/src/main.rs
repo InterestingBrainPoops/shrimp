@@ -30,9 +30,15 @@ fn handle_start(start_req: Json<GameRequest>) -> Status {
 #[post("/move", format = "json", data = "<move_req>")]
 fn handle_move(move_req: Json<GameRequest>) -> JsonValue {
     // println!("e");
-    let eval = move_req
-        .into_small()
-        .minimax(5, i32::MIN, i32::MAX, true, None);
+    let mut small = move_req.into_small();
+    let t0 = small.clone();
+    let eval = small.minimax(15, i32::MIN, i32::MAX, true, None);
+    assert!(small
+        .board
+        .food
+        .iter()
+        .all(|item| t0.board.food.contains(item)));
+    assert_eq!(small.board.snakes, t0.board.snakes);
     println!(
         "turn: {},score: {}, direction : {:?}",
         move_req.turn, eval.score, eval.direction
