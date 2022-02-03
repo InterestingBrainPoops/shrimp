@@ -18,6 +18,6 @@ impl StaticEval for SmallRequest {
             }
         }
 
-        (self.board.snakes[self.you].body.len()) as i32 * 10 - dist_food * 500
+        (self.board.snakes[self.you].body.len()) as i32 * 10 - dist_food * 2
     }
 }
