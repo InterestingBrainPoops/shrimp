@@ -35,7 +35,7 @@ fn handle_move(move_req: Json<GameRequest>) -> JsonValue {
     let mut small = move_req.into_small();
     let mut t0 = small.clone();
     println!("{:?}", t0.snake_moves(t0.you));
-    let eval = small.minimax(5, i32::MIN, i32::MAX, true, None);
+    let eval = small.minimax(4, i32::MIN, i32::MAX, true, None);
     // assert!(t0
     // .board
     // .food
