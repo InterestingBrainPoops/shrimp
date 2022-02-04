@@ -71,9 +71,8 @@ impl Search for SmallRequest {
             }
             for current_move in self.snake_moves(self.you) {
                 let eval = self.minimax(depth, alpha, beta, !maximizing, Some(current_move));
-                if value <= (eval.score) {
-                    // eval.score + 1 since otherwise it won't actually flip the value.
-                    out = Some(current_move.direction);
+                if value < eval.score {
+                    out = current_move.direction;
                     value = eval.score;
                 }
                 if value >= beta {
@@ -83,7 +82,7 @@ impl Search for SmallRequest {
             }
             Evaluation {
                 score: value,
-                direction: out, // Returns None if it has no moves (which shouldn't happen regardless)
+                direction: Some(out),
             }
         } else {
             // let mut best_moves = vec![];
