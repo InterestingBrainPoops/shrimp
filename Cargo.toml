@@ -1,6 +1,7 @@
 [workspace]
 
 members = [
+    "fuzzer",
     "engine",
     "board",
     "movegen",

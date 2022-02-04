@@ -62,7 +62,7 @@ impl Search for SmallRequest {
         if maximizing {
             let mut value = i32::MIN;
             let mut out = None;
-            if (self.snake_moves(self.you).len() == 0) {
+            if self.snake_moves(self.you).is_empty() {
                 // If you don't have any moves, return up with i32::MIN, since you are basically dead
                 return Evaluation {
                     score: i32::MIN,

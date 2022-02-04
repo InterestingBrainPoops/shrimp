@@ -6,9 +6,9 @@ extern crate rocket;
 extern crate rocket_contrib;
 
 use board::board::GameRequest;
-use board::small::SmallRequest;
+
 use movegen::genmove::*;
-use pretty_assertions::assert_eq;
+
 use rocket::config::{Config, Environment};
 use rocket::http::Status;
 use rocket_contrib::json::{Json, JsonValue};
@@ -24,8 +24,8 @@ fn handle_index() -> JsonValue {
     });
 }
 
-#[post("/start", format = "json", data = "<start_req>")]
-fn handle_start(start_req: Json<GameRequest>) -> Status {
+#[post("/start", format = "json", data = "<_start_req>")]
+fn handle_start(_start_req: Json<GameRequest>) -> Status {
     Status::Ok
 }
 
@@ -33,7 +33,7 @@ fn handle_start(start_req: Json<GameRequest>) -> Status {
 fn handle_move(move_req: Json<GameRequest>) -> JsonValue {
     // println!("e");
     let mut small = move_req.into_small();
-    let mut t0 = small.clone();
+    let t0 = small.clone();
     println!("{:?}", t0.snake_moves(t0.you));
     let eval = small.minimax(4, i32::MIN, i32::MAX, true, None);
     // assert!(t0
@@ -52,8 +52,8 @@ fn handle_move(move_req: Json<GameRequest>) -> JsonValue {
     return json!({ "move":  eval.direction.unwrap().to_string()});
 }
 
-#[post("/end", format = "json", data = "<end_req>")]
-fn handle_end(end_req: Json<GameRequest>) -> Status {
+#[post("/end", format = "json", data = "<_end_req>")]
+fn handle_end(_end_req: Json<GameRequest>) -> Status {
     println!("end");
     Status::Ok
 }
