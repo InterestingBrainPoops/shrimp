@@ -1,4 +1,4 @@
-use crate::makeunmake::Move;
+use crate::makeunmake::{Direction, Move};
 use board::{board::Coordinate, small::SmallRequest};
 use permutator::copy::cartesian_product;
 pub trait GenMove {
@@ -67,20 +67,22 @@ impl GenMove for SmallRequest {
                 out.push(*mov);
             }
         }
-        if (out.len() == 0) {
-            return vec![Move {
-                direction: crate::makeunmake::Direction::Up,
-                id: id as u8,
-            }];
-        }
         out
     }
 
     fn all_snake_moves(&self, predet_move: Move) -> Vec<Vec<Move>> {
         let mut moves: Vec<Vec<Move>> = vec![];
-        for i in 0..self.board.snakes.len() {
-            if i != self.you && self.board.snakes[i].alive {
-                moves.push(self.snake_moves(i));
+        for id in 0..self.board.snakes.len() {
+            if id != self.you && self.board.snakes[id].alive {
+                let generated_moves = self.snake_moves(id);
+                if generated_moves.is_empty() {
+                    moves.push(vec![Move {
+                        direction: Direction::Up,
+                        id: id as u8,
+                    }])
+                } else {
+                    moves.push(generated_moves);
+                }
             }
         }
         let x = vec![predet_move];

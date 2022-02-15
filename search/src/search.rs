@@ -72,7 +72,7 @@ impl Search for SmallRequest {
             for current_move in self.snake_moves(self.you) {
                 let eval = self.minimax(depth, alpha, beta, !maximizing, Some(current_move));
                 if value < eval.score {
-                    out = current_move.direction;
+                    out = Some(current_move.direction);
                     value = eval.score;
                 }
                 if value >= beta {
@@ -82,7 +82,7 @@ impl Search for SmallRequest {
             }
             Evaluation {
                 score: value,
-                direction: Some(out),
+                direction: out,
             }
         } else {
             // let mut best_moves = vec![];
