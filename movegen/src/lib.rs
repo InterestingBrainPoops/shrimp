@@ -2,6 +2,8 @@
 pub mod genmove;
 /// Make and unmake move functions
 pub mod makeunmake;
+
+mod cart_prod;
 #[cfg(test)]
 mod tests {
     use std::fs;

@@ -1,25 +1,29 @@
 use board::{board::Coordinate, small::SmallRequest};
+use tinyvec::*;
+/// Maximum number of snakes that I can handle
+pub const SNAKE_MAX: usize = 4;
+
 /// A delta that stores the non-inferable data about a given state
 pub struct Delta {
     /// Food that was eaten in the transition
-    eaten_food: Vec<Coordinate>,
+    eaten_food: ArrayVec<[Coordinate; SNAKE_MAX]>,
     /// Snakes that died for a variety of reasons
-    died: Vec<u8>,
+    died: ArrayVec<[u8; SNAKE_MAX]>,
     /// Previous healths of snakes, (id, health)
-    prev_health: Vec<(u8, u8)>,
+    prev_health: ArrayVec<[(u8, u8); SNAKE_MAX]>,
     /// Tails of snakes that were there before, (id, position)
-    tails: Vec<(u8, Coordinate)>,
+    tails: ArrayVec<[(u8, Coordinate); SNAKE_MAX]>,
 }
 /// Make and unmake move trait
 pub trait MakeUnmake {
     /// Advance a state given a set of moves for each and all snakes
-    fn make_move(&mut self, moves: &Vec<Move>) -> Delta;
+    fn make_move(&mut self, moves: &ArrayVec<[Move; SNAKE_MAX]>) -> Delta;
     /// Unmake a move given the delta of non-mirror moves
     fn unmake_move(&mut self, delta: &Delta);
 }
 
 trait Helpers {
-    fn move_snakes(&mut self, moves: &Vec<Move>, delta: &mut Delta);
+    fn move_snakes(&mut self, moves: &ArrayVec<[Move; SNAKE_MAX]>, delta: &mut Delta);
     fn reduce_health(&mut self);
     fn maybe_feed_snakes(&mut self, delta: &mut Delta);
     fn maybe_eliminiate_snakes(&mut self, delta: &mut Delta);
@@ -66,14 +70,22 @@ impl Move {
 
 /// Directions that the snakes can move
 #[derive(Clone, Copy, Debug)]
+
 pub enum Direction {
     Up,
     Down,
     Left,
     Right,
 }
+
+impl Default for Direction {
+    fn default() -> Self {
+        Self::Up
+    }
+}
+
 impl Helpers for SmallRequest {
-    fn move_snakes(&mut self, moves: &Vec<Move>, delta: &mut Delta) {
+    fn move_snakes(&mut self, moves: &ArrayVec<[Move; SNAKE_MAX]>, delta: &mut Delta) {
         for snake_move in moves {
             self.board.snakes[snake_move.id as usize].head += snake_move.direction.into();
             let head = self.board.snakes[snake_move.id as usize].head;
@@ -143,7 +155,7 @@ impl Helpers for SmallRequest {
             }
         }
 
-        let mut elims = vec![];
+        let mut elims: ArrayVec<[u8; SNAKE_MAX]> = array_vec![];
 
         for snake in &self.board.snakes {
             if !snake.alive {
@@ -196,12 +208,12 @@ impl Helpers for SmallRequest {
     }
 }
 impl MakeUnmake for SmallRequest {
-    fn make_move(&mut self, moves: &Vec<Move>) -> Delta {
+    fn make_move(&mut self, moves: &ArrayVec<[Move; SNAKE_MAX]>) -> Delta {
         let mut out = Delta {
-            eaten_food: vec![],
-            died: vec![],
-            prev_health: vec![],
-            tails: vec![],
+            eaten_food: array_vec![],
+            died: array_vec![],
+            prev_health: array_vec![],
+            tails: array_vec![],
         };
         self.move_snakes(moves, &mut out);
 

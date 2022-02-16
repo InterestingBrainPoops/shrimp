@@ -1,18 +1,24 @@
-use crate::makeunmake::{Direction, Move};
+use crate::{
+    cart_prod::cartesian_product,
+    makeunmake::{Direction, Move, SNAKE_MAX},
+};
 use board::{board::Coordinate, small::SmallRequest};
-use permutator::copy::cartesian_product;
+use tinyvec::{array_vec, ArrayVec};
 pub trait GenMove {
     /// Get valid moves for a given snake
     /// By valid that means it doesn't cause an instant death.
-    fn snake_moves(&self, id: usize) -> Vec<Move>;
+    fn snake_moves(&self, id: usize) -> ArrayVec<[Move; 4]>;
     /// Generate a 2D vector of moves for all snakes
     /// This should be given the move predetermined move for the "you" player
-    fn all_snake_moves(&self, predet_move: Move) -> Vec<Vec<Move>>;
+    fn all_snake_moves(
+        &self,
+        predet_move: Move,
+    ) -> ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; (4 as usize).pow(SNAKE_MAX as u32)]>;
 }
 
 impl GenMove for SmallRequest {
-    fn snake_moves(&self, id: usize) -> Vec<Move> {
-        let mut out = vec![];
+    fn snake_moves(&self, id: usize) -> ArrayVec<[Move; 4]> {
+        let mut out = array_vec![];
 
         if !self.board.snakes[id].alive {
             return out;
@@ -60,8 +66,11 @@ impl GenMove for SmallRequest {
         out
     }
 
-    fn all_snake_moves(&self, predet_move: Move) -> Vec<Vec<Move>> {
-        let mut moves: Vec<Vec<Move>> = vec![];
+    fn all_snake_moves(
+        &self,
+        predet_move: Move,
+    ) -> ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; (4 as usize).pow(SNAKE_MAX as u32)]> {
+        let mut moves: ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; SNAKE_MAX]> = array_vec![];
         for id in 0..self.board.snakes.len() {
             if id != self.you && self.board.snakes[id].alive {
                 let generated_moves = self.snake_moves(id);
@@ -72,12 +81,11 @@ impl GenMove for SmallRequest {
                 }
             }
         }
-        let x = vec![predet_move];
+        let x = array_vec![predet_move.clone()];
         moves.push(x);
         // println!("{:?}", moves);
-        let mut out = vec![];
-        let slices: Vec<&[Move]> = moves.iter().map(Vec::as_slice).collect();
-        cartesian_product(&slices[..], |x| out.push(x.to_vec()));
+        let mut out = array_vec![];
+        out = cartesian_product(moves);
         out
     }
 }
