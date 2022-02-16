@@ -32,7 +32,7 @@ struct BattleSnake {
 }
 
 /// A coordinate
-#[derive(Clone, Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord, Default)]
 pub struct Coordinate {
     /// x coordinate
     pub x: i32,
