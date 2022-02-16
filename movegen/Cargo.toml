@@ -20,4 +20,4 @@ name = "perft_bench"
 harness = false
 
 [profile.bench]
-debug=true
+debug = true
