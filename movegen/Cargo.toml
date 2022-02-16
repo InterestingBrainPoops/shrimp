@@ -18,3 +18,6 @@ permutator = "0.4.3"
 [[bench]]
 name = "perft_bench"
 harness = false
+
+[profile.bench]
+debug=true
