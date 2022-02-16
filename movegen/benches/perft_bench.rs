@@ -23,7 +23,7 @@ fn perft(state: &mut SmallRequest, depth: u8, player: bool, you_move: Option<Mov
         for x in state.all_snake_moves(you_move.unwrap()) {
             // let t0 = state.clone();
             delta = state.make_move(&x);
-            perft(&mut delta, depth - 1, !player, None);
+            perft(state, depth - 1, !player, None);
             state.unmake_move(&delta);
             // assert_eq!(state.board.snakes, t0.board.snakes);
         }
