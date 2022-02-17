@@ -1,6 +1,7 @@
+use board::small::SNAKE_MAX;
 use tinyvec::{array_vec, ArrayVec};
 
-use crate::makeunmake::{Move, SNAKE_MAX};
+use crate::makeunmake::Move;
 
 // excerpted from : https://gist.github.com/kylewlacy/115965b40e02a3325558
 /// Given a vector containing a partial Cartesian product, and a list of items,

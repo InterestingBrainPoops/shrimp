@@ -1,8 +1,11 @@
 use crate::{
     cart_prod::cartesian_product,
-    makeunmake::{Direction, Move, SNAKE_MAX},
+    makeunmake::{Direction, Move},
 };
-use board::{board::Coordinate, small::SmallRequest};
+use board::{
+    board::Coordinate,
+    small::{SmallRequest, SNAKE_MAX},
+};
 use tinyvec::{array_vec, ArrayVec};
 pub trait GenMove {
     /// Get valid moves for a given snake
