@@ -65,6 +65,7 @@
        ],
        "height":11,
        "width":11,
+       "hazards" : [],
        "snakes":[
           {
              "health":100,
