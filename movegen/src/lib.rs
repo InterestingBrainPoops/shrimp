@@ -10,6 +10,7 @@ mod tests {
 
     use board::board::GameRequest;
     use board::small::SmallRequest;
+    use tinyvec::array_vec;
 
     use crate::genmove::GenMove;
     use crate::makeunmake::{MakeUnmake, Move};
@@ -44,7 +45,7 @@ mod tests {
         // );
         // get file
         let contents =
-            fs::read_to_string(env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\food.json")
+            fs::read_to_string(env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\wall.json")
                 .expect("Something went wrong reading the file");
         // make it into a smallrequest
         let seralized: GameRequest = serde_json::from_str(&contents).expect("Invalid json");
@@ -66,7 +67,7 @@ mod tests {
         // );
         // get file
         let contents =
-            fs::read_to_string(env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\food.json")
+            fs::read_to_string(env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\body.json")
                 .expect("Something went wrong reading the file");
         // make it into a smallrequest
         let seralized: GameRequest = serde_json::from_str(&contents).expect("Invalid json");
@@ -88,7 +89,7 @@ mod tests {
         // );
         // get file
         let contents =
-            fs::read_to_string(env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\food.json")
+            fs::read_to_string(env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\head.json")
                 .expect("Something went wrong reading the file");
         // make it into a smallrequest
         let seralized: GameRequest = serde_json::from_str(&contents).expect("Invalid json");
@@ -102,7 +103,26 @@ mod tests {
         assert_eq!(t0.board.food, small.board.food);
         assert_eq!(small.board.snakes, t0.board.snakes);
     }
-
+    #[test]
+    fn move_generation_food() {
+        let contents =
+            fs::read_to_string(env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\body.json")
+                .expect("Something went wrong reading the file");
+        // make it into a smallrequest
+        let seralized: GameRequest = serde_json::from_str(&contents).expect("Invalid json");
+        let small = seralized.into_small();
+        let mut moves_you = small.snake_moves(0);
+        moves_you.sort();
+        let mut moves_other = small.snake_moves(1);
+        moves_other.sort();
+        let mut movesothercheck = array_vec![[Move;4] => Move{id : 1, direction : crate::makeunmake::Direction::Left}, Move{id : 1, direction : crate::makeunmake::Direction::Up}];
+        movesothercheck.sort();
+        assert_eq!(moves_other, movesothercheck);
+        assert_eq!(
+            moves_you,
+            array_vec![[Move;4] => Move{id : 0, direction : crate::makeunmake::Direction::Left}]
+        )
+    }
     fn perft(state: &mut SmallRequest, depth: u8, player: bool, you_move: Option<Move>) {
         // println!("e");
         if depth == 0 || state.amount_alive() == 1 {
