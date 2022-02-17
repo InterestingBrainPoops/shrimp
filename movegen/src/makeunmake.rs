@@ -1,7 +1,8 @@
-use board::{board::Coordinate, small::SmallRequest};
+use board::{
+    board::Coordinate,
+    small::{SmallRequest, SNAKE_MAX},
+};
 use tinyvec::*;
-/// Maximum number of snakes that I can handle
-pub const SNAKE_MAX: usize = 4;
 
 /// A delta that stores the non-inferable data about a given state
 pub struct Delta {
