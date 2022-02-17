@@ -13,7 +13,19 @@ pub trait GenMove {
     fn all_snake_moves(
         &self,
         predet_move: Move,
-    ) -> ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; (4 as usize).pow(SNAKE_MAX as u32)]>;
+    ) -> ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; 4_usize.pow(SNAKE_MAX as u32)]>;
+}
+
+fn get_neck_dir(head: &Coordinate, neck: &Coordinate) -> Direction {
+    if head.x < neck.x {
+        return Direction::Right;
+    } else if head.x > neck.x {
+        return Direction::Left;
+    } else if head.y < neck.y {
+        return Direction::Up;
+    } else {
+        return Direction::Down;
+    }
 }
 
 impl GenMove for SmallRequest {
@@ -32,30 +44,36 @@ impl GenMove for SmallRequest {
         for mov in possible_moves.iter() {
             let new_pos: Coordinate = self.board.snakes[id].head + mov.direction.into();
             let mut removed = false;
-            for snake in &self.board.snakes {
-                if !snake.alive {
-                    continue;
-                } // move on if the other snake is dead
-                if snake.id != mov.id
-                    && snake.head == new_pos
-                    && snake.length >= self.board.snakes[id].length
-                {
-                    removed = true;
-                    break;
-                } // remove the move if the head is the same as the new head pos, and the other length is bigger or equal to my length
+            if get_neck_dir(&self.board.snakes[id].head, &self.board.snakes[id].body[1])
+                == mov.direction
+            {
+                removed = true;
+            } else {
+                for snake in &self.board.snakes {
+                    if !snake.alive {
+                        continue;
+                    } // move on if the other snake is dead
+                    if snake.id != mov.id
+                        && snake.head == new_pos
+                        && snake.length >= self.board.snakes[id].length
+                    {
+                        removed = true;
+                        break;
+                    } // remove the move if the head is the same as the new head pos, and the other length is bigger or equal to my length
 
-                if snake.body[1..((snake.length - 1) as usize)].contains(&new_pos) {
-                    removed = true;
-                    break;
-                } // remove if the head is in the other
-                if new_pos.x >= self.board.width as i32
-                    || new_pos.x < 0
-                    || new_pos.y >= self.board.height as i32
-                    || new_pos.y < 0
-                {
-                    removed = true;
-                    break;
-                } // remove if the head is
+                    if snake.body[1..((snake.length - 1) as usize)].contains(&new_pos) {
+                        removed = true;
+                        break;
+                    } // remove if the head is in the other
+                    if new_pos.x >= self.board.width as i32
+                        || new_pos.x < 0
+                        || new_pos.y >= self.board.height as i32
+                        || new_pos.y < 0
+                    {
+                        removed = true;
+                        break;
+                    } // remove if the head is
+                }
             }
             if !removed {
                 out.push(
@@ -69,7 +87,7 @@ impl GenMove for SmallRequest {
     fn all_snake_moves(
         &self,
         predet_move: Move,
-    ) -> ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; (4 as usize).pow(SNAKE_MAX as u32)]> {
+    ) -> ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; 4_usize.pow(SNAKE_MAX as u32)]> {
         let mut moves: ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; SNAKE_MAX]> = array_vec![];
         for id in 0..self.board.snakes.len() {
             if id != self.you && self.board.snakes[id].alive {

@@ -69,7 +69,7 @@ impl Move {
 }
 
 /// Directions that the snakes can move
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 
 pub enum Direction {
     Up,
