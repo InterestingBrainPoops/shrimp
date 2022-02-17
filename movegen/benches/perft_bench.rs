@@ -10,7 +10,13 @@ use movegen::{
 
 fn perft(state: &mut SmallRequest, depth: u8, player: bool, you_move: Option<Move>) {
     // println!("e");
-    if depth == 0 || state.amount_alive() == 1 {
+    if state.amount_alive() as usize == 0
+        || !state.board.snakes[state.you].alive
+        || state.amount_alive() as usize == 1
+        || depth == 0
+    {
+        // im the only one left
+        // println!("fg");
         return;
     }
     // println!("{:?}", state.snake_moves(state.you));
