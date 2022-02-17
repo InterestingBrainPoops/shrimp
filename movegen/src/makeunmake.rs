@@ -29,7 +29,7 @@ trait Helpers {
 }
 /// Stores a move for a given id
 
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Move {
     /// Direction to move
     pub direction: Direction,
@@ -38,7 +38,7 @@ pub struct Move {
 }
 
 /// Directions that the snakes can move
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 
 pub enum Direction {
     Up,
