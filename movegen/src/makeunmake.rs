@@ -38,6 +38,12 @@ pub struct Move {
     pub id: u8,
 }
 
+impl Move {
+    pub fn new(direction: Direction, id: u8) -> Self {
+        Move { direction, id }
+    }
+}
+
 /// Directions that the snakes can move
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 
@@ -58,7 +64,7 @@ impl Helpers for SmallRequest {
     fn move_snakes(&mut self, moves: &ArrayVec<[Move; SNAKE_MAX]>, delta: &mut Delta) {
         for snake_move in moves {
             self.board.snakes[snake_move.id as usize].head += snake_move.direction.into();
-            let head = self.board.snakes[snake_move.id as usize].head.clone();
+            let head = self.board.snakes[snake_move.id as usize].head;
             self.board.snakes[snake_move.id as usize]
                 .body
                 .insert(0, head);
@@ -84,26 +90,22 @@ impl Helpers for SmallRequest {
         for food in &self.board.food {
             let mut eaten = false;
             for snake in &mut self.board.snakes {
-                if snake.head == food.clone() {
+                if snake.head == *food {
                     eaten = true;
                     delta.prev_health.push((snake.id, snake.health));
-                    snake.body.push(snake.body.last().unwrap().clone());
+                    snake.body.push(*snake.body.last().unwrap());
                     snake.health = 100;
                     snake.length += 1;
                 }
             }
             if eaten {
-                delta.eaten_food.push(food.clone());
+                delta.eaten_food.push(*food);
             }
         }
         for food in &delta.eaten_food {
-            self.board.food.swap_remove(
-                self.board
-                    .food
-                    .iter()
-                    .position(|x| *x == food.clone())
-                    .expect(""),
-            );
+            self.board
+                .food
+                .swap_remove(self.board.food.iter().position(|x| *x == *food).expect(""));
         }
     }
 
@@ -202,7 +204,7 @@ impl MakeUnmake for SmallRequest {
     fn unmake_move(&mut self, delta: &Delta) {
         // put food back
         for food in &delta.eaten_food {
-            self.board.food.push(food.clone());
+            self.board.food.push(*food);
         }
         // bring back the dead
         for id in &delta.died {
@@ -224,11 +226,11 @@ impl MakeUnmake for SmallRequest {
         for snake in &mut self.board.snakes {
             if snake.alive {
                 snake.body.remove(0);
-                snake.head = snake.body[0].clone();
+                snake.head = snake.body[0];
             }
         }
         for (id, tail) in &delta.tails {
-            self.board.snakes[*id as usize].body.push(tail.clone());
+            self.board.snakes[*id as usize].body.push(*tail);
         }
     }
 }

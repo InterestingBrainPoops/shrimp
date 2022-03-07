@@ -115,31 +115,29 @@ mod tests {
         moves_you.sort();
         let mut moves_other = small.snake_moves(1);
         moves_other.sort();
-        let mut movesothercheck = array_vec![[Move;4] => Move{id : 1, direction : crate::makeunmake::Direction::Left}, Move{id : 1, direction : crate::makeunmake::Direction::Up}];
+        let mut movesothercheck = array_vec![[Move;4] => Move::new( crate::makeunmake::Direction::Left, 1), Move::new(crate::makeunmake::Direction::Up, 1)];
         movesothercheck.sort();
         assert_eq!(moves_other, movesothercheck);
         assert_eq!(
             moves_you,
-            array_vec![[Move;4] => Move{id : 0, direction : crate::makeunmake::Direction::Left}]
+            array_vec![[Move;4] => Move::new(crate::makeunmake::Direction::Left, 0)]
         )
     }
 
     #[test]
 
     fn movegen_same_direction_test() {
-        fn move_generation_food() {
-            let contents =
-                fs::read_to_string(env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\movgen.json")
-                    .expect("Something went wrong reading the file");
-            // make it into a smallrequest
-            let seralized: GameRequest = serde_json::from_str(&contents).expect("Invalid json");
-            let small = seralized.into_small();
-            let mut moves_you = small.snake_moves(0);
-            moves_you.sort();
-            let mut moves_actual = array_vec![[Move;4] => Move{id : 0, direction : crate::makeunmake::Direction::Left}, Move{id : 0, direction : crate::makeunmake::Direction::Up} , Move{id : 0, direction : crate::makeunmake::Direction::Right}];
-            moves_actual.sort();
-            assert_eq!(moves_you, moves_actual)
-        }
+        let contents =
+            fs::read_to_string(env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\movegen.json")
+                .expect("Something went wrong reading the file");
+        // make it into a smallrequest
+        let seralized: GameRequest = serde_json::from_str(&contents).expect("Invalid json");
+        let small = seralized.into_small();
+        let mut moves_you = small.snake_moves(0);
+        moves_you.sort();
+        let mut moves_actual = array_vec![[Move;4] => Move::new(crate::makeunmake::Direction::Left, 0), Move::new(crate::makeunmake::Direction::Down, 0) , Move::new(crate::makeunmake::Direction::Right, 0)];
+        moves_actual.sort();
+        assert_eq!(moves_you, moves_actual)
     }
 
     fn perft(state: &mut SmallRequest, depth: u8, player: bool, you_move: Option<Move>) {

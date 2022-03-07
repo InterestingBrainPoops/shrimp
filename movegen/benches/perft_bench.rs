@@ -67,10 +67,7 @@ fn move_make_midgame(c: &mut Criterion) {
     // make it into a smallrequest
     let seralized: GameRequest = serde_json::from_str(&contents).expect("Invalid json");
     let mut small = seralized.into_small();
-    let move_to_make = small.all_snake_moves(Move {
-        id: 0,
-        direction: Direction::Up,
-    })[0];
+    let move_to_make = small.all_snake_moves(Move::new(Direction::Up, 0))[0];
     c.bench_function("move_make_midgame", |b| {
         b.iter(|| {
             let delta = small.make_move(&move_to_make);
