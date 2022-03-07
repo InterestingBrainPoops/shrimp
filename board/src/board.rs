@@ -78,7 +78,7 @@ impl GameRequest {
                 id: x as u8,
                 health: y.health,
                 body: y.body.clone(),
-                head: y.head.clone(),
+                head: y.head,
                 alive: true,
                 length: y.length,
             });
