@@ -1,7 +1,8 @@
-use board::{board::Coordinate, small::SmallRequest};
+use board::{
+    board::Coordinate,
+    small::{SmallRequest, SNAKE_MAX},
+};
 use tinyvec::*;
-/// Maximum number of snakes that I can handle
-pub const SNAKE_MAX: usize = 4;
 
 /// A delta that stores the non-inferable data about a given state
 pub struct Delta {
@@ -29,7 +30,7 @@ trait Helpers {
 }
 /// Stores a move for a given id
 
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Move {
     /// Direction to move
     pub direction: Direction,
@@ -38,7 +39,7 @@ pub struct Move {
 }
 
 /// Directions that the snakes can move
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 
 pub enum Direction {
     Up,
