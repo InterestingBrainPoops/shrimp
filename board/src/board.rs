@@ -32,13 +32,21 @@ struct BattleSnake {
 }
 
 /// A coordinate
-#[derive(Clone, Debug, Deserialize, PartialEq, Eq, PartialOrd, Ord, Default)]
+#[derive(Clone, Debug, Deserialize, PartialOrd, Ord, Default)]
 pub struct Coordinate {
     /// x coordinate
     pub x: i32,
     /// y coordinate
     pub y: i32,
 }
+
+impl PartialEq for Coordinate {
+    fn eq(&self, other: &Self) -> bool {
+        self.x == other.x && self.y == other.y
+    }
+}
+
+impl Eq for Coordinate {}
 
 impl AddAssign for Coordinate {
     fn add_assign(&mut self, rhs: Self) {
