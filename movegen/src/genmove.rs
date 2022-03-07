@@ -18,25 +18,13 @@ impl GenMove for SmallRequest {
             return out;
         }
         let possible_moves = vec![
-            Move {
-                direction: crate::makeunmake::Direction::Up,
-                id: id as u8,
-            },
-            Move {
-                direction: crate::makeunmake::Direction::Right,
-                id: id as u8,
-            },
-            Move {
-                direction: crate::makeunmake::Direction::Left,
-                id: id as u8,
-            },
-            Move {
-                direction: crate::makeunmake::Direction::Down,
-                id: id as u8,
-            },
+            Move::new(crate::makeunmake::Direction::Up, id as u8),
+            Move::new(crate::makeunmake::Direction::Right, id as u8),
+            Move::new(crate::makeunmake::Direction::Down, id as u8),
+            Move::new(crate::makeunmake::Direction::Left, id as u8),
         ];
         for mov in possible_moves.iter() {
-            let new_pos: Coordinate = self.board.snakes[id].head.clone() + mov.direction.into();
+            let new_pos: Coordinate = self.board.snakes[id].head + mov.direction.into();
             let mut removed = false;
             for snake in &self.board.snakes {
                 if !snake.alive {
@@ -64,7 +52,9 @@ impl GenMove for SmallRequest {
                 } // remove if the head is
             }
             if !removed {
-                out.push(*mov);
+                out.push(
+                    mov.update_simulated(crate::makeunmake::SimulatedValues { new_head: new_pos }),
+                );
             }
         }
         out
@@ -76,10 +66,7 @@ impl GenMove for SmallRequest {
             if id != self.you && self.board.snakes[id].alive {
                 let generated_moves = self.snake_moves(id);
                 if generated_moves.is_empty() {
-                    moves.push(vec![Move {
-                        direction: Direction::Up,
-                        id: id as u8,
-                    }])
+                    moves.push(vec![Move::new(Direction::Up, id as u8)])
                 } else {
                     moves.push(generated_moves);
                 }
