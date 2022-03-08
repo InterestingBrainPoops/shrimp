@@ -1,6 +1,6 @@
 use crate::{
     cart_prod::cartesian_product,
-    makeunmake::{Direction, Move},
+    makeunmake::{Direction, Move, SimulatedValues},
 };
 use board::{
     board::Coordinate,
@@ -51,45 +51,40 @@ impl GenMove for SmallRequest {
             let mut removed = false;
             let neck_direction =
                 get_neck_dir(&self.board.snakes[id].head, &self.board.snakes[id].body[1]);
-            match neck_direction {
-                Some(neck_direction_actual) => {
-                    if neck_direction_actual == mov.direction {
-                        println!("{:?}", mov.direction);
-                        removed = true;
-                    } else {
-                        for snake in &self.board.snakes {
-                            if !snake.alive {
-                                continue;
-                            } // move on if the other snake is dead
-                            if snake.id != mov.id
-                                && snake.head == new_pos
-                                && snake.length >= self.board.snakes[id].length
-                            {
-                                removed = true;
-                                break;
-                            } // remove the move if the head is the same as the new head pos, and the other length is bigger or equal to my length
-
-                            if snake.body[1..((snake.length - 1) as usize)].contains(&new_pos) {
-                                removed = true;
-                                break;
-                            } // remove if the head is in the other
-                            if new_pos.x >= self.board.width as i32
-                                || new_pos.x < 0
-                                || new_pos.y >= self.board.height as i32
-                                || new_pos.y < 0
-                            {
-                                removed = true;
-                                break;
-                            } // remove if the head is
-                        }
-                    }
-                }
-                None => {
+            if let Some(neck_direction_actual) = neck_direction {
+                if neck_direction_actual == mov.direction {
+                    // println!("{:?}", mov.direction);
                     removed = true;
+                } else {
+                    for snake in &self.board.snakes {
+                        if !snake.alive {
+                            continue;
+                        } // move on if the other snake is dead
+                        if snake.id != mov.id
+                            && snake.head == new_pos
+                            && snake.length >= self.board.snakes[id].length
+                        {
+                            removed = true;
+                            break;
+                        } // remove the move if the head is the same as the new head pos, and the other length is bigger or equal to my length
+
+                        if snake.body[1..((snake.length - 1) as usize)].contains(&new_pos) {
+                            removed = true;
+                            break;
+                        } // remove if the head is in the other
+                        if new_pos.x >= self.board.width as i32
+                            || new_pos.x < 0
+                            || new_pos.y >= self.board.height as i32
+                            || new_pos.y < 0
+                        {
+                            removed = true;
+                            break;
+                        } // remove if the head is out of bounds
+                    }
                 }
             }
             if !removed {
-                out.push(*mov);
+                out.push(mov.update_simulated(SimulatedValues::new(new_pos)));
             }
         }
         out
@@ -110,7 +105,7 @@ impl GenMove for SmallRequest {
                 }
             }
         }
-        let x = array_vec![predet_move.clone()];
+        let x = array_vec![[Move; 4] => predet_move];
         moves.push(x);
         // println!("{:?}", moves);
         cartesian_product(moves)

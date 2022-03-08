@@ -1,10 +1,13 @@
 use std::fs;
 
-use board::{board::GameRequest, small::SmallRequest};
+use board::{
+    board::{Coordinate, GameRequest},
+    small::SmallRequest,
+};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use movegen::{
     genmove::GenMove,
-    makeunmake::{Direction, MakeUnmake, Move},
+    makeunmake::{Direction, MakeUnmake, Move, SimulatedValues},
 };
 // use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
@@ -55,7 +58,7 @@ fn movegen_perft_earlygame(c: &mut Criterion) {
     // make it into a smallrequest
     let seralized: GameRequest = serde_json::from_str(&contents).expect("Invalid json");
     let mut small = seralized.into_small();
-    c.bench_function("movegen_perft_early", |b| {
+    c.bench_function("movegen_perft_earlygame", |b| {
         b.iter(|| perft(&mut small, 5, true, None))
     });
 }
@@ -67,10 +70,13 @@ fn move_make_midgame(c: &mut Criterion) {
     // make it into a smallrequest
     let seralized: GameRequest = serde_json::from_str(&contents).expect("Invalid json");
     let mut small = seralized.into_small();
-    let move_to_make = small.all_snake_moves(Move::new(Direction::Up, 0))[0];
+    let move_to_make = small.all_snake_moves(
+        Move::new(Direction::Down, 0)
+            .update_simulated(SimulatedValues::new(Coordinate { x: 5, y: 4 })),
+    )[0];
     c.bench_function("move_make_midgame", |b| {
         b.iter(|| {
-            let delta = small.make_move(&move_to_make);
+            let delta = small.make_move(black_box(&move_to_make));
             small.unmake_move(&delta);
         })
     });
@@ -84,12 +90,7 @@ fn movegen_midgame(c: &mut Criterion) {
     let seralized: GameRequest = serde_json::from_str(&contents).expect("Invalid json");
     let small = seralized.into_small();
     c.bench_function("movegen_midgame", |b| {
-        b.iter(|| {
-            small.all_snake_moves(black_box(Move {
-                id: 0,
-                direction: Direction::Up,
-            }))
-        })
+        b.iter(|| (small.all_snake_moves(black_box(Move::new(Direction::Down, 0)))))
     });
 }
 

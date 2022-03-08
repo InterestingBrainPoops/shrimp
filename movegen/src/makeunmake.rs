@@ -28,10 +28,23 @@ trait Helpers {
     fn maybe_feed_snakes(&mut self, delta: &mut Delta);
     fn maybe_eliminiate_snakes(&mut self, delta: &mut Delta);
 }
-/// Stores a move for a given id
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct SimulatedValues {
+    pub new_head_pos: Coordinate,
+}
+
+impl SimulatedValues {
+    pub fn new(new_head_pos: Coordinate) -> Self {
+        SimulatedValues { new_head_pos }
+    }
+}
+
+/// Stores a move for a given id
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Move {
+    /// Simulated values for a given snake id and move
+    pub simulated: Option<SimulatedValues>,
     /// Direction to move
     pub direction: Direction,
     /// ID of the snake
@@ -40,7 +53,17 @@ pub struct Move {
 
 impl Move {
     pub fn new(direction: Direction, id: u8) -> Self {
-        Move { direction, id }
+        Move {
+            direction,
+            id,
+            simulated: None,
+        }
+    }
+
+    #[must_use]
+    pub fn update_simulated(mut self, values: SimulatedValues) -> Self {
+        self.simulated = Some(values);
+        self
     }
 }
 
@@ -63,11 +86,18 @@ impl Default for Direction {
 impl Helpers for SmallRequest {
     fn move_snakes(&mut self, moves: &ArrayVec<[Move; SNAKE_MAX]>, delta: &mut Delta) {
         for snake_move in moves {
-            self.board.snakes[snake_move.id as usize].head += snake_move.direction.into();
-            let head = self.board.snakes[snake_move.id as usize].head;
-            self.board.snakes[snake_move.id as usize]
-                .body
-                .insert(0, head);
+            if let Some(simvalues) = snake_move.simulated {
+                self.board.snakes[snake_move.id as usize]
+                    .body
+                    .insert(0, simvalues.new_head_pos);
+            } else {
+                self.board.snakes[snake_move.id as usize].head += snake_move.direction.into();
+                let head = self.board.snakes[snake_move.id as usize].head;
+                self.board.snakes[snake_move.id as usize]
+                    .body
+                    .insert(0, head);
+            }
+
             delta.tails.push((
                 snake_move.id,
                 self.board.snakes[snake_move.id as usize]
