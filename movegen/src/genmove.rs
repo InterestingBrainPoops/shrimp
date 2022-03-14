@@ -54,7 +54,7 @@ impl GenMove for SmallRequest {
             match neck_direction {
                 Some(neck_direction_actual) => {
                     if neck_direction_actual == mov.direction {
-                        println!("{:?}", mov.direction);
+                        // println!("{:?}", mov.direction);
                         removed = true;
                     } else {
                         for snake in &self.board.snakes {
@@ -85,7 +85,7 @@ impl GenMove for SmallRequest {
                     }
                 }
                 None => {
-                    removed = true;
+                    removed = false;
                 }
             }
             if !removed {

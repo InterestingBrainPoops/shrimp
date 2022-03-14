@@ -92,12 +92,29 @@ fn movegen_midgame(c: &mut Criterion) {
         })
     });
 }
-
+fn make_all_moves(c: &mut Criterion) {
+    let contents =
+        fs::read_to_string(env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\four_player.json")
+            .expect("Something went wrong reading the file");
+    // make it into a smallrequest
+    let seralized: GameRequest = serde_json::from_str(&contents).expect("Invalid json");
+    let mut small = seralized.into_small();
+    let all_moves = small.all_snake_moves(Move::new(Direction::Down, 0));
+    c.bench_function("make_all_move_4_player", |b| {
+        b.iter(|| {
+            for x in all_moves {
+                let delta = small.make_move(&x);
+                small.unmake_move(&delta);
+            }
+        })
+    });
+}
 criterion_group!(
     benches,
+    make_all_moves,
     movegen_perft_midgame,
     movegen_perft_earlygame,
     move_make_midgame,
-    movegen_midgame
+    movegen_midgame,
 );
 criterion_main!(benches);
