@@ -6,8 +6,6 @@ pub const SNAKE_MAX: usize = 4;
 /// A key point here is that the you member is the index of you in the snakes list itself.
 #[derive(Clone, Debug)]
 pub struct SmallRequest {
-    /// Grid of game state
-    // pub grid: Vec<Vec<Square>>,
     /// current turn (not updated by make / unmake move)
     pub turn: i64,
     /// the board
