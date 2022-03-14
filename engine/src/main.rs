@@ -38,6 +38,11 @@ fn handle_move(move_req: Json<GameRequest>) -> JsonValue {
     let t0 = Instant::now();
     let eval = small.minimax(5, i32::MIN, i32::MAX, true, None);
     let t1 = Instant::now();
+    let you_moves = small.snake_moves(small.you);
+    if you_moves.len() == 1 {
+        return json!({ "move":  you_moves[0].direction.to_string()});
+    }
+    println!("{:?}", small.snake_moves(small.you));
     println!("{:?}", t1 - t0);
     // assert!(t0
     // .board
@@ -52,6 +57,7 @@ fn handle_move(move_req: Json<GameRequest>) -> JsonValue {
         "turn: {},score: {}, direction : {:?}",
         move_req.turn, eval.score, eval.direction
     );
+
     return json!({ "move":  eval.direction.unwrap().to_string()});
 }
 
