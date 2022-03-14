@@ -7,9 +7,9 @@ use crate::makeunmake::Move;
 /// Given a vector containing a partial Cartesian product, and a list of items,
 /// return a vector adding the list of items to the partial Cartesian product.
 pub fn partial_cartesian(
-    a: ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; (4 as usize).pow(SNAKE_MAX as u32)]>,
+    a: ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; (4usize).pow(SNAKE_MAX as u32)]>,
     b: tinyvec::ArrayVec<[Move; 4]>,
-) -> ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; (4 as usize).pow(SNAKE_MAX as u32)]> {
+) -> ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; (4usize).pow(SNAKE_MAX as u32)]> {
     a.into_iter()
         .flat_map(|xs| {
             b.iter()
@@ -27,10 +27,10 @@ pub fn partial_cartesian(
 /// Computes the Cartesian product of lists[0] * lists[1] * ... * lists[n].
 pub fn cartesian_product(
     lists: ArrayVec<[ArrayVec<[Move; 4]>; SNAKE_MAX]>,
-) -> ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; (4 as usize).pow(SNAKE_MAX as u32)]> {
+) -> ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; (4usize).pow(SNAKE_MAX as u32)]> {
     match lists.split_first() {
         Some((first, rest)) => {
-            let init: ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; (4 as usize).pow(SNAKE_MAX as u32)]> =
+            let init: ArrayVec<[ArrayVec<[Move; SNAKE_MAX]>; (4usize).pow(SNAKE_MAX as u32)]> =
                 first
                     .iter()
                     .cloned()

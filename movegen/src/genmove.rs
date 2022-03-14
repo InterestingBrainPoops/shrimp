@@ -110,7 +110,7 @@ impl GenMove for SmallRequest {
                 }
             }
         }
-        let x = array_vec![predet_move.clone()];
+        let x = array_vec![[Move; SNAKE_MAX] => predet_move];
         moves.push(x);
         // println!("{:?}", moves);
         cartesian_product(moves)

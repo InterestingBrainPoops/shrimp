@@ -235,9 +235,9 @@ impl MakeUnmake for SmallRequest {
     }
 }
 
-impl Into<Coordinate> for Direction {
-    fn into(self) -> Coordinate {
-        match self {
+impl From<Direction> for Coordinate {
+    fn from(dir: Direction) -> Self {
+        match dir {
             Direction::Up => Coordinate { x: 0, y: 1 },
             Direction::Down => Coordinate { x: 0, y: -1 },
             Direction::Left => Coordinate { x: -1, y: 0 },

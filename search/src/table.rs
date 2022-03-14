@@ -1,6 +1,6 @@
 use std::ops::{Index, IndexMut};
 
-use board::small::{SmallBoard, SmallRequest};
+use board::small::SmallBoard;
 use movegen::makeunmake::Move;
 const TT_SIZE: u64 = 1000000;
 

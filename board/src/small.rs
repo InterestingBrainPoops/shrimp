@@ -2,29 +2,6 @@ use crate::board::Coordinate;
 /// Maximum number of snakes that I can handle
 pub const SNAKE_MAX: usize = 4;
 
-// TODO: implement Grid
-// pub enum Square {
-//     TripleStack {
-//         /// ID of snake that is the triple stack
-//         id: u8,
-//     },
-//     /// This is when there are two body parts ontop of each other
-//     DoubleStack,
-//     /// Head Stack
-//     HeadStack { ids: ArrayVec<[u8; SNAKE_MAX]> },
-//     /// Head of a snake
-//     Head {
-//         /// ID of snake
-//         id: u8,
-//     },
-//     /// Body
-//     Body,
-//     /// Food
-//     Food,
-//     /// Food Stack
-//     FoodStack { ids: ArrayVec<[u8; SNAKE_MAX]> },
-// }
-
 /// A game request that has stripped out useless info.
 /// A key point here is that the you member is the index of you in the snakes list itself.
 #[derive(Clone, Debug)]
