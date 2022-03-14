@@ -39,10 +39,6 @@ mod tests {
     }
     #[test]
     fn perft_wall_collision_test() {
-        // println!(
-        //     "{}",
-        //     env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\wall.json"
-        // );
         // get file
         let contents =
             fs::read_to_string(env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\wall.json")
@@ -50,7 +46,6 @@ mod tests {
         // make it into a smallrequest
         let seralized: GameRequest = serde_json::from_str(&contents).expect("Invalid json");
         let mut small = seralized.into_small();
-        // println!("{:?}", small);
         // run perft depth 4
         let mut t0 = small.clone();
         perft(&mut small, 5, true, None);
@@ -61,10 +56,6 @@ mod tests {
     }
     #[test]
     fn perft_body_collision_test() {
-        // println!(
-        //     "{}",
-        //     env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\body.json"
-        // );
         // get file
         let contents =
             fs::read_to_string(env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\body.json")
@@ -72,7 +63,6 @@ mod tests {
         // make it into a smallrequest
         let seralized: GameRequest = serde_json::from_str(&contents).expect("Invalid json");
         let mut small = seralized.into_small();
-        // println!("{:?}", small);
         // run perft depth 4
         let mut t0 = small.clone();
         perft(&mut small, 5, true, None);
@@ -83,10 +73,6 @@ mod tests {
     }
     #[test]
     fn perft_head_collision_test() {
-        // println!(
-        //     "{}",
-        //     env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\head.json"
-        // );
         // get file
         let contents =
             fs::read_to_string(env!("CARGO_MANIFEST_DIR").to_string() + "\\tests\\head.json")
@@ -94,7 +80,6 @@ mod tests {
         // make it into a smallrequest
         let seralized: GameRequest = serde_json::from_str(&contents).expect("Invalid json");
         let mut small = seralized.into_small();
-        // println!("{:?}", small);
         // run perft depth 4
         let mut t0 = small.clone();
         perft(&mut small, 5, true, None);
@@ -148,7 +133,6 @@ mod tests {
         {
             return;
         }
-        // println!("{:?}", state.snake_moves(state.you));
         if player {
             for x in state.snake_moves(state.you) {
                 perft(state, depth, !player, Some(x));

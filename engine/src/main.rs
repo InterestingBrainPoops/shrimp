@@ -5,6 +5,9 @@ extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
 
+use std::thread;
+use std::time::Instant;
+
 use board::board::GameRequest;
 
 use movegen::genmove::*;
@@ -31,11 +34,11 @@ fn handle_start(_start_req: Json<GameRequest>) -> Status {
 
 #[post("/move", format = "json", data = "<move_req>")]
 fn handle_move(move_req: Json<GameRequest>) -> JsonValue {
-    // println!("e");
     let mut small = move_req.into_small();
-    let t0 = small.clone();
-    println!("{:?}", t0.snake_moves(t0.you));
+    let t0 = Instant::now();
     let eval = small.minimax(5, i32::MIN, i32::MAX, true, None);
+    let t1 = Instant::now();
+    println!("{:?}", t1 - t0);
     // assert!(t0
     // .board
     // .food

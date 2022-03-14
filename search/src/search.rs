@@ -30,7 +30,6 @@ impl Search for SmallRequest {
         maximizing: bool,
         you_move: Option<Move>,
     ) -> Evaluation {
-        // println!("f");
         if self.amount_alive() as usize == 0 {
             // noone is alive
             return Evaluation {
@@ -45,7 +44,6 @@ impl Search for SmallRequest {
             };
         } else if self.amount_alive() as usize == 1 {
             // im the only one left
-            // println!("fg");
             return Evaluation {
                 score: i32::MAX,
                 direction: None,

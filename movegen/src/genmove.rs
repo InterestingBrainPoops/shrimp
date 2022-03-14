@@ -54,7 +54,6 @@ impl GenMove for SmallRequest {
             match neck_direction {
                 Some(neck_direction_actual) => {
                     if neck_direction_actual == mov.direction {
-                        // println!("{:?}", mov.direction);
                         removed = true;
                     } else {
                         for snake in &self.board.snakes {
@@ -112,7 +111,6 @@ impl GenMove for SmallRequest {
         }
         let x = array_vec![[Move; SNAKE_MAX] => predet_move];
         moves.push(x);
-        // println!("{:?}", moves);
         cartesian_product(moves)
     }
 }
