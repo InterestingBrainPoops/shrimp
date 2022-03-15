@@ -18,14 +18,16 @@ impl StaticEval for SmallRequest {
                 dist_food = manhattan_dist(&you_head, food);
             }
         }
-        let mut biggest_length = true;
+        let mut biggest_length = 0;
         for snake in &self.board.snakes {
-            if snake.length >= you_length {
-                biggest_length = false;
-                break;
+            if snake.length >= biggest_length {
+                biggest_length = snake.length;
             }
         }
+        let biggest = biggest_length <= you_length;
+        let difference = you_length - biggest_length;
         (self.board.snakes[self.you].body.len()) as i32 * 10 - dist_food * 2
-            + biggest_length as i32 * 5
+            + difference as i32 * 20
+            + biggest as i32 * 1000
     }
 }
