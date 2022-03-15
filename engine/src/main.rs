@@ -36,7 +36,7 @@ fn handle_start(_start_req: Json<GameRequest>) -> Status {
 fn handle_move(move_req: Json<GameRequest>) -> JsonValue {
     let mut small = move_req.into_small();
     let t0 = Instant::now();
-    let eval = small.minimax(5, i32::MIN, i32::MAX, true, None);
+    let eval = small.minimax(4, i32::MIN, i32::MAX, true, None);
     let t1 = Instant::now();
     let you_moves = small.snake_moves(small.you);
     if you_moves.len() == 1 {

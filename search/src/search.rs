@@ -69,7 +69,7 @@ impl Search for SmallRequest {
             }
             for current_move in self.snake_moves(self.you) {
                 let eval = self.minimax(depth, alpha, beta, !maximizing, Some(current_move));
-                if value < eval.score {
+                if value <= eval.score {
                     out = Some(current_move.direction);
                     value = eval.score;
                 }
@@ -92,7 +92,7 @@ impl Search for SmallRequest {
                 let eval = self.minimax(depth - 1, alpha, beta, !maximizing, None);
                 self.unmake_move(&delta);
 
-                if value > eval.score {
+                if value >= eval.score {
                     // best_moves = moves.clone();
                     value = eval.score;
                 }
