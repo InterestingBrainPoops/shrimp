@@ -25,7 +25,7 @@ impl StaticEval for SmallRequest {
             }
         }
         let biggest = biggest_length <= you_length;
-        let difference = you_length - biggest_length;
+        let difference = you_length as i32 - biggest_length as i32;
         (self.board.snakes[self.you].body.len()) as i32 * 10 - dist_food * 2
             + difference as i32 * 20
             + biggest as i32 * 1000
