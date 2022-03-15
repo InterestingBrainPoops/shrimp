@@ -39,13 +39,13 @@ impl Search for SmallRequest {
         } else if !self.board.snakes[self.you].alive {
             // im not alive
             return Evaluation {
-                score: i32::MIN,
+                score: i32::MIN + 1000,
                 direction: None,
             };
         } else if self.amount_alive() as usize == 1 {
             // im the only one left
             return Evaluation {
-                score: i32::MAX,
+                score: i32::MAX - 1000,
                 direction: None,
             };
         }
