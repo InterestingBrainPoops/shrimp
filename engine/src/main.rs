@@ -5,7 +5,6 @@ extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
 
-use std::thread;
 use std::time::Instant;
 
 use board::board::GameRequest;
@@ -14,6 +13,7 @@ use movegen::genmove::*;
 
 use rocket::config::{Config, Environment};
 use rocket::http::Status;
+use rocket::routes;
 use rocket_contrib::json::{Json, JsonValue};
 use search::search::Search;
 #[get("/")]
