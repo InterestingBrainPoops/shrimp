@@ -49,8 +49,6 @@ pub struct SmallBattlesnake {
     pub length: u16,
     /// whether or not the snake is alive
     pub alive: bool,
-    /// head bitboard
-    pub head_bb: BoolBoard,
     /// body bitborad
     pub body_bb: BoolBoard,
 }

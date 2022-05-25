@@ -1,5 +1,6 @@
 use board::{
     board::Coordinate,
+    boolboard::BoolBoard,
     small::{SmallRequest, SNAKE_MAX},
 };
 use tinyvec::*;
@@ -60,25 +61,31 @@ impl Default for Direction {
     }
 }
 
+fn clear_bool_board_smart(bb: &mut BoolBoard, stuff: &Vec<Coordinate>) {
+    for thing in stuff {
+        bb[*thing] = false;
+    }
+}
+
 impl Helpers for SmallRequest {
     fn move_snakes(&mut self, moves: &ArrayVec<[Move; SNAKE_MAX]>, delta: &mut Delta) {
         for snake_move in moves {
             // intermediate snake storage to prevent code duplication
             let mut snake = &mut self.board.snakes[snake_move.id as usize];
-            // remove the old head
-            snake.head_bb[snake.head] = false;
+
             // move the snakes head
             snake.head += Coordinate::from(snake_move.direction);
+            // clear the old body from the boolboard
+            clear_bool_board_smart(&mut snake.body_bb, &snake.body);
+
             // insert the new head into the beginning of the body
             snake.body.insert(0, snake.head);
-            // add the new head
-            snake.head_bb[snake.head] = true;
 
-            snake.body_bb.clear();
             // generate the new snake body
             for coord in &snake.body[1..(snake.body.len() - 1)] {
                 snake.body_bb[*coord] = true;
             }
+
             // update the turn delta
             delta.tails.push((
                 snake_move.id,
@@ -228,27 +235,26 @@ impl MakeUnmake for SmallRequest {
             self.board.snakes[*id as usize].body.pop().unwrap();
             self.board.snakes[*id as usize].length -= 1;
         }
-        // increase health
+
         for snake in &mut self.board.snakes {
             if snake.alive {
+                // increase health
                 snake.health += 1;
-            }
-        }
-        // unmove snakes
-        for snake in &mut self.board.snakes {
-            if snake.alive {
+
+                // clear the old body from the boolboard
+                clear_bool_board_smart(&mut snake.body_bb, &snake.body);
+
+                // unmove snakes
                 snake.body.remove(0);
-                snake.head_bb[snake.head] = false;
                 snake.head = snake.body[0];
-                snake.head_bb[snake.head] = true;
             }
         }
+
         for (id, tail) in &delta.tails {
             self.board.snakes[*id as usize].body.push(*tail);
         }
         for snake in &mut self.board.snakes {
             if snake.alive {
-                snake.body_bb.clear();
                 // generate the new snake body
                 for coord in &snake.body[1..] {
                     snake.body_bb[*coord] = true;

@@ -104,7 +104,6 @@ impl GameRequest {
                 head: y.head,
                 alive: true,
                 length: y.length,
-                head_bb: BoolBoard::new(),
                 body_bb: BoolBoard::new(),
             });
             // give the last added snake the body bits into its body bitboard
@@ -112,9 +111,6 @@ impl GameRequest {
             for coord in &y.body[1..] {
                 out.board.snakes.last_mut().unwrap().body_bb[*coord] = true
             }
-
-            // give the last added snake the head bit into its head bitboard
-            out.board.snakes.last_mut().unwrap().head_bb[y.head] = true;
 
             if y.id == self.you.id {
                 out.you = x;

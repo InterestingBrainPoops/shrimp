@@ -16,14 +16,6 @@ impl BoolBoard {
             inner: [[false; 13]; 13],
         }
     }
-
-    pub fn clear(&mut self) {
-        for i in 0..13 {
-            for x in 0..13 {
-                self.inner[i][x] = false
-            }
-        }
-    }
 }
 impl Default for BoolBoard {
     fn default() -> Self {
