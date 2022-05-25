@@ -65,18 +65,28 @@ impl Helpers for SmallRequest {
         for snake_move in moves {
             // intermediate snake storage to prevent code duplication
             let mut snake = &mut self.board.snakes[snake_move.id as usize];
+
             // move the snakes head
             snake.head += Coordinate::from(snake_move.direction);
+
             // insert the new head into the beginning of the body
             snake.body.insert(0, snake.head);
-            // generate the new head bit board
-            snake.head_bb = u128::from(snake.head);
 
-            snake.body_bb = 0;
-            // generate the new snake body
-            for coord in &snake.body[1..(snake.body.len() - 1)] {
-                snake.body_bb |= u128::from(*coord);
-            }
+            // insert the current head into the body_bb
+            snake.body_bb |= snake.head_bb;
+
+            // remove old head from bitboard
+            snake.head_bb ^= snake.head_bb;
+
+            // generate the new head bit board
+            snake.head_bb |= u128::from(snake.head);
+
+            // remove the old tail
+            snake.body_bb &= !(u128::from(snake.body[snake.length as usize - 1]));
+
+            // add in the new tail
+            snake.body_bb |= u128::from(snake.body[snake.length as usize - 1]);
+
             // update the turn delta
             delta.tails.push((
                 snake_move.id,
@@ -247,11 +257,8 @@ impl MakeUnmake for SmallRequest {
         }
         for snake in &mut self.board.snakes {
             if snake.alive {
-                snake.body_bb = 0;
-                // generate the new snake body
-                for coord in &snake.body[1..] {
-                    snake.body_bb |= u128::from(*coord);
-                }
+                snake.body_bb ^= snake.head_bb;
+                snake.body_bb |= u128::from(snake.body[snake.length as usize - 1]);
             }
         }
     }
