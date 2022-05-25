@@ -1,4 +1,4 @@
-use crate::board::Coordinate;
+use crate::{board::Coordinate, boolboard::BoolBoard};
 /// Maximum number of snakes that I can handle
 pub const SNAKE_MAX: usize = 4;
 
@@ -17,8 +17,8 @@ pub struct SmallRequest {
 /// The board info with stripped out uselsess info
 #[derive(Clone, Debug)]
 pub struct SmallBoard {
-    /// Bit board of food
-    pub food_bb: u128,
+    /// Bool board of food
+    pub food_bb: BoolBoard,
     /// zobrist hash
     pub zobrist: u64,
     /// height of board in cells
@@ -50,9 +50,9 @@ pub struct SmallBattlesnake {
     /// whether or not the snake is alive
     pub alive: bool,
     /// head bitboard
-    pub head_bb: u128,
+    pub head_bb: BoolBoard,
     /// body bitborad
-    pub body_bb: u128,
+    pub body_bb: BoolBoard,
 }
 
 impl Default for SmallRequest {
@@ -73,7 +73,7 @@ impl SmallRequest {
                 food: vec![],
                 hazards: vec![],
                 snakes: vec![],
-                food_bb: 0,
+                food_bb: BoolBoard::new(),
             },
             you: 0,
         }

@@ -75,10 +75,8 @@ impl GenMove for SmallRequest {
                                 removed = true;
                                 break;
                             } // remove the move if the head is the same as the new head pos, and the other length is bigger or equal to my length
-                            if (snake.body_bb & !(u128::from(*snake.body.last().unwrap())))
-                                & u128::from(new_pos)
-                                != 0
-                            {
+
+                            if snake.body[1..((snake.length - 1) as usize)].contains(&new_pos) {
                                 removed = true;
                                 break;
                             } // remove if the head is in the other snake
