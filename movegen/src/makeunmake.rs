@@ -61,30 +61,23 @@ impl Default for Direction {
     }
 }
 
-fn clear_bool_board_smart(bb: &mut BoolBoard, stuff: &Vec<Coordinate>) {
-    for thing in stuff {
-        bb[*thing] = false;
-    }
-}
-
 impl Helpers for SmallRequest {
     fn move_snakes(&mut self, moves: &ArrayVec<[Move; SNAKE_MAX]>, delta: &mut Delta) {
         for snake_move in moves {
             // intermediate snake storage to prevent code duplication
             let mut snake = &mut self.board.snakes[snake_move.id as usize];
 
+            snake.body_bb[snake.head] = true;
+
             // move the snakes head
             snake.head += Coordinate::from(snake_move.direction);
-            // clear the old body from the boolboard
-            clear_bool_board_smart(&mut snake.body_bb, &snake.body);
 
             // insert the new head into the beginning of the body
             snake.body.insert(0, snake.head);
 
-            // generate the new snake body
-            for coord in &snake.body[1..(snake.body.len() - 1)] {
-                snake.body_bb[*coord] = true;
-            }
+            // remove the current tail and add back in the new tail
+            snake.body_bb[snake.body[snake.length as usize - 1]] = false;
+            snake.body_bb[snake.body[snake.length as usize - 1]] = true;
 
             // update the turn delta
             delta.tails.push((
@@ -241,12 +234,10 @@ impl MakeUnmake for SmallRequest {
                 // increase health
                 snake.health += 1;
 
-                // clear the old body from the boolboard
-                clear_bool_board_smart(&mut snake.body_bb, &snake.body);
-
                 // unmove snakes
                 snake.body.remove(0);
                 snake.head = snake.body[0];
+                snake.body_bb[snake.head] = false;
             }
         }
 
@@ -254,12 +245,7 @@ impl MakeUnmake for SmallRequest {
             self.board.snakes[*id as usize].body.push(*tail);
         }
         for snake in &mut self.board.snakes {
-            if snake.alive {
-                // generate the new snake body
-                for coord in &snake.body[1..] {
-                    snake.body_bb[*coord] = true;
-                }
-            }
+            snake.body_bb[snake.body[snake.length as usize - 1]] = true;
         }
     }
 }
