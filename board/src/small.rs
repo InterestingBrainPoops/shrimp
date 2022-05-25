@@ -17,6 +17,8 @@ pub struct SmallRequest {
 /// The board info with stripped out uselsess info
 #[derive(Clone, Debug)]
 pub struct SmallBoard {
+    /// Bit board of food
+    pub food_bb: u128,
     /// zobrist hash
     pub zobrist: u64,
     /// height of board in cells
@@ -47,6 +49,10 @@ pub struct SmallBattlesnake {
     pub length: u16,
     /// whether or not the snake is alive
     pub alive: bool,
+    /// head bitboard
+    pub head_bb: u128,
+    /// body bitborad
+    pub body_bb: u128,
 }
 
 impl Default for SmallRequest {
@@ -67,6 +73,7 @@ impl SmallRequest {
                 food: vec![],
                 hazards: vec![],
                 snakes: vec![],
+                food_bb: 0,
             },
             you: 0,
         }
