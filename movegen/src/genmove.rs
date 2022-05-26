@@ -60,18 +60,6 @@ impl GenMove for SmallRequest {
                             if !snake.alive {
                                 continue;
                             } // move on if the other snake is dead
-                            if snake.id != mov.id
-                                && snake.head == new_pos
-                                && snake.length >= self.board.snakes[id].length
-                            {
-                                removed = true;
-                                break;
-                            } // remove the move if the head is the same as the new head pos, and the other length is bigger or equal to my length
-
-                            if snake.body[1..((snake.length - 1) as usize)].contains(&new_pos) {
-                                removed = true;
-                                break;
-                            } // remove if the head is in the other
                             if new_pos.x >= self.board.width as i32
                                 || new_pos.x < 0
                                 || new_pos.y >= self.board.height as i32
@@ -79,7 +67,21 @@ impl GenMove for SmallRequest {
                             {
                                 removed = true;
                                 break;
-                            } // remove if the head is
+                            } // remove if the head is out of bounds
+                            if snake.id != mov.id
+                                && snake.head == new_pos
+                                && snake.length >= self.board.snakes[id].length
+                            {
+                                removed = true;
+                                break;
+                            } // remove the move if the head is the same as the new head pos, and the other length is bigger or equal to my length
+                            if (snake.body_bb & !(u128::from(*snake.body.last().unwrap())))
+                                & u128::from(new_pos)
+                                != 0
+                            {
+                                removed = true;
+                                break;
+                            } // remove if the head is in the other snake
                         }
                     }
                 }

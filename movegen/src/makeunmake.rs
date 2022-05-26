@@ -63,11 +63,31 @@ impl Default for Direction {
 impl Helpers for SmallRequest {
     fn move_snakes(&mut self, moves: &ArrayVec<[Move; SNAKE_MAX]>, delta: &mut Delta) {
         for snake_move in moves {
-            self.board.snakes[snake_move.id as usize].head += snake_move.direction.into();
-            let head = self.board.snakes[snake_move.id as usize].head;
-            self.board.snakes[snake_move.id as usize]
-                .body
-                .insert(0, head);
+            // intermediate snake storage to prevent code duplication
+            let mut snake = &mut self.board.snakes[snake_move.id as usize];
+
+            // move the snakes head
+            snake.head += Coordinate::from(snake_move.direction);
+
+            // insert the new head into the beginning of the body
+            snake.body.insert(0, snake.head);
+
+            // insert the current head into the body_bb
+            snake.body_bb |= snake.head_bb;
+
+            // remove old head from bitboard
+            snake.head_bb ^= snake.head_bb;
+
+            // generate the new head bit board
+            snake.head_bb |= u128::from(snake.head);
+
+            // remove the old tail
+            snake.body_bb &= !(u128::from(snake.body[snake.length as usize - 1]));
+
+            // add in the new tail
+            snake.body_bb |= u128::from(snake.body[snake.length as usize - 1]);
+
+            // update the turn delta
             delta.tails.push((
                 snake_move.id,
                 self.board.snakes[snake_move.id as usize]
@@ -87,25 +107,24 @@ impl Helpers for SmallRequest {
     }
 
     fn maybe_feed_snakes(&mut self, delta: &mut Delta) {
-        for food in &self.board.food {
-            let mut eaten = false;
-            for snake in &mut self.board.snakes {
-                if snake.head == *food {
-                    eaten = true;
-                    delta.prev_health.push((snake.id, snake.health));
-                    snake.body.push(*snake.body.last().unwrap());
-                    snake.health = 100;
-                    snake.length += 1;
-                }
-            }
-            if eaten {
-                delta.eaten_food.push(*food);
+        for snake in &mut self.board.snakes {
+            if (snake.head_bb & self.board.food_bb) != 0 {
+                delta.prev_health.push((snake.id, snake.health));
+                snake.body.push(*snake.body.last().unwrap());
+                snake.health = 100;
+                snake.length += 1;
+                delta
+                    .eaten_food
+                    .push(Coordinate::from(snake.head_bb & self.board.food_bb));
             }
         }
+
+        delta.eaten_food.dedup();
         for food in &delta.eaten_food {
             self.board
                 .food
                 .swap_remove(self.board.food.iter().position(|x| *x == *food).expect(""));
+            self.board.food_bb &= !u128::from(*food);
         }
     }
 
@@ -138,7 +157,7 @@ impl Helpers for SmallRequest {
                 continue;
             }
 
-            if snake.body[1..].contains(&snake.head) {
+            if (snake.body_bb & snake.head_bb) != 0 {
                 elims.push(snake.id);
                 continue;
             }
@@ -149,7 +168,7 @@ impl Helpers for SmallRequest {
                     continue;
                 }
 
-                if other.id != snake.id && other.body[1..].contains(&snake.head) {
+                if other.id != snake.id && ((other.body_bb & snake.head_bb) != 0) {
                     elims.push(snake.id);
                     has_body_collided = true;
                     break;
@@ -177,10 +196,12 @@ impl Helpers for SmallRequest {
                 continue;
             }
         }
+        elims.dedup();
         for id in elims {
             self.board.snakes[id as usize].alive = false;
             delta.died.push(id);
         }
+        delta.died.dedup();
     }
 }
 impl MakeUnmake for SmallRequest {
@@ -205,6 +226,7 @@ impl MakeUnmake for SmallRequest {
         // put food back
         for food in &delta.eaten_food {
             self.board.food.push(*food);
+            self.board.food_bb |= u128::from(*food);
         }
         // bring back the dead
         for id in &delta.died {
@@ -213,7 +235,7 @@ impl MakeUnmake for SmallRequest {
         // unfeed snakes
         for (id, prev_health) in &delta.prev_health {
             self.board.snakes[*id as usize].health = *prev_health;
-            self.board.snakes[*id as usize].body.pop();
+            self.board.snakes[*id as usize].body.pop().unwrap();
             self.board.snakes[*id as usize].length -= 1;
         }
         // increase health
@@ -227,10 +249,17 @@ impl MakeUnmake for SmallRequest {
             if snake.alive {
                 snake.body.remove(0);
                 snake.head = snake.body[0];
+                snake.head_bb = u128::from(snake.head);
             }
         }
         for (id, tail) in &delta.tails {
             self.board.snakes[*id as usize].body.push(*tail);
+        }
+        for snake in &mut self.board.snakes {
+            if snake.alive {
+                snake.body_bb ^= snake.head_bb;
+                snake.body_bb |= u128::from(snake.body[snake.length as usize - 1]);
+            }
         }
     }
 }

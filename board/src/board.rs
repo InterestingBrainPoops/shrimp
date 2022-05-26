@@ -65,12 +65,32 @@ impl Add for Coordinate {
     }
 }
 
+impl From<Coordinate> for u128 {
+    fn from(input: Coordinate) -> Self {
+        let mut out = 1;
+        out <<= input.y * 11;
+        out <<= input.x;
+        out
+    }
+}
+
+impl From<u128> for Coordinate {
+    fn from(input: u128) -> Self {
+        let zeroes = input.trailing_zeros() as i32;
+        Coordinate {
+            x: zeroes % 11,
+            y: zeroes / 11,
+        }
+    }
+}
+
 impl GameRequest {
     pub fn into_small(&self) -> SmallRequest {
         let mut out = SmallRequest::new();
         out.turn = self.turn;
         out.board.height = self.board.height;
         out.board.width = self.board.width;
+
         out.board.food = self.board.food.clone();
         out.board.hazards = self.board.hazards.clone();
         for (x, y) in self.board.snakes.iter().enumerate() {
@@ -81,7 +101,17 @@ impl GameRequest {
                 head: y.head,
                 alive: true,
                 length: y.length,
+                head_bb: 0,
+                body_bb: 0,
             });
+            // give the last added snake the body bits into its body bitboard
+            // exclude the head because reasons
+            for coord in &y.body[1..] {
+                out.board.snakes.last_mut().unwrap().body_bb |= u128::from(*coord);
+            }
+
+            // give the last added snake the head bit into its head bitboard
+            out.board.snakes.last_mut().unwrap().head_bb = u128::from(y.head);
 
             if y.id == self.you.id {
                 out.you = x;
