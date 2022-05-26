@@ -1,0 +1,12 @@
+how this is supposed to work
+
+
+First start off with the inital seed
+
+create x "children" by randomly modifying the initial seed
+
+run y games with each child against the inital seed, use multithreading with a work queue
+
+pick the highest snake (even if its the "parent") and store its metadata.
+
+then start from line 6 and repeat until the program is interrupted
