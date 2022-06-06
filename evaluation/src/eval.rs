@@ -10,24 +10,51 @@ fn manhattan_dist(p1: &Coordinate, p2: &Coordinate) -> i32 {
 
 impl StaticEval for SmallRequest {
     fn static_eval(&self) -> i32 {
-        let mut dist_food = i32::MAX;
-        let you_head = self.board.snakes[self.you].head;
-        let you_length = self.board.snakes[self.you].length;
-        for food in &self.board.food {
-            if manhattan_dist(&self.board.snakes[self.you].body[0], food) < dist_food {
-                dist_food = manhattan_dist(&you_head, food);
+        let mut closest_pos = (&Coordinate::new(100, 100), 100);
+        let mut biggest = true;
+        for x in &board.board.snakes {
+            if x.length >= board.you.length && x.id != board.you.id {
+                biggest = false;
+                break;
             }
         }
-        let mut biggest_length = 0;
-        for snake in &self.board.snakes {
-            if snake.length >= biggest_length {
-                biggest_length = snake.length;
+        if biggest {
+            let mut smallest = (Coordinate::new(0, 0), 1000);
+            for x in &board.board.snakes {
+                if x.length < smallest.1 && x.id != board.you.id {
+                    smallest.1 = x.length;
+                    smallest.0 = x.head;
+                }
+            }
+            closest_pos.1 = manhattan(&board.you.head, &smallest.0);
+        } else {
+            for food in &board.board.food {
+                if closest_pos.1 > manhattan(food, &board.you.head) {
+                    closest_pos.1 = manhattan(food, &board.you.head);
+                    closest_pos.0 = food;
+                }
+            }
+            if closest_pos.1 == 100 {
+                closest_pos.1 = 0;
             }
         }
-        let biggest = biggest_length <= you_length;
-        let difference = you_length as i32 - biggest_length as i32;
-        (self.board.snakes[self.you].body.len()) as i32 * 10
-            + difference as i32 * 20
-            + biggest as i32 * 1000
+        let mut closest_snakehead = (&Coordinate::new(100, 100), 100);
+        if !biggest {
+            for food in &board.board.snakes {
+                if closest_snakehead.1 > manhattan(&food.head, &board.you.head)
+                    && food.id != board.you.id
+                {
+                    closest_snakehead.1 = manhattan(&food.head, &board.you.head);
+                    closest_snakehead.0 = &food.head;
+                }
+            }
+            if closest_snakehead.1 == 100 {
+                closest_snakehead.1 = 0;
+            }
+        }
+        (board.you.length * weights.0 as u16) as i32
+            - ((board.board.snakes.len() - amnt_dead(board)) * weights.1 as usize) as i32
+            - closest_pos.1 * weights.2
+            - closest_snakehead.1 * weights.3
     }
 }

@@ -11,7 +11,7 @@ enum Flag {
     Beta,
     Nothing,
 }
-
+    
 #[derive(Clone)]
 struct Data {
     score: i32,
