@@ -44,6 +44,7 @@ impl Search for SmallRequest {
             };
         } else if self.amount_alive() as usize == 1 {
             // im the only one left
+            // im alive
             return Evaluation {
                 score: i32::MAX - 1000,
                 direction: None,
@@ -73,8 +74,9 @@ impl Search for SmallRequest {
                     out = Some(current_move.direction);
                     value = eval.score;
                 }
+
                 if value >= beta {
-                    break;
+                    break; // beta cutoff
                 }
                 alpha = alpha.max(value);
             }
@@ -97,7 +99,7 @@ impl Search for SmallRequest {
                     value = eval.score;
                 }
                 if value <= alpha {
-                    break;
+                    break; // alpha cutoff
                 }
                 beta = beta.min(value);
             }

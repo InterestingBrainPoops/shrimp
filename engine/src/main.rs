@@ -2,22 +2,23 @@
 
 #[macro_use]
 extern crate rocket;
-#[macro_use]
-extern crate rocket_contrib;
 
+use std::net::IpAddr;
+use std::str::FromStr;
 use std::time::Instant;
 
 use board::board::GameRequest;
 
 use movegen::genmove::*;
 
-use rocket::config::{Config, Environment};
+use rocket::config::Config;
 use rocket::http::Status;
 use rocket::routes;
-use rocket_contrib::json::{Json, JsonValue};
+use rocket::serde::json::{json, Json, Value};
 use search::search::Search;
+
 #[get("/")]
-fn handle_index() -> JsonValue {
+fn handle_index() -> Value {
     return json!({
         "apiversion": "1",
         "author": "BrokenKeyboard",
@@ -33,7 +34,7 @@ fn handle_start(_start_req: Json<GameRequest>) -> Status {
 }
 
 #[post("/move", format = "json", data = "<move_req>")]
-fn handle_move(move_req: Json<GameRequest>) -> JsonValue {
+fn handle_move(move_req: Json<GameRequest>) -> Value {
     let mut small = move_req.into_small();
     let t0 = Instant::now();
     let eval = small.minimax(7, i32::MIN, i32::MAX, true, None);
@@ -72,11 +73,9 @@ fn main() {
     let env_port = "8000";
     let port = env_port.parse::<u16>().unwrap();
 
-    let config = Config::build(Environment::Development)
-        .address(address)
-        .port(port)
-        .finalize()
-        .unwrap();
+    let mut config = Config::release_default();
+    config.address = IpAddr::from_str(address).unwrap();
+    config.port = port;
     rocket::custom(config)
         .mount(
             "/",

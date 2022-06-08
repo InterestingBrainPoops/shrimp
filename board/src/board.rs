@@ -40,6 +40,12 @@ pub struct Coordinate {
     pub y: i32,
 }
 
+impl Coordinate {
+    pub fn new(x: i32, y: i32) -> Self {
+        Coordinate { x, y }
+    }
+}
+
 impl PartialEq for Coordinate {
     fn eq(&self, other: &Self) -> bool {
         self.x == other.x && self.y == other.y
