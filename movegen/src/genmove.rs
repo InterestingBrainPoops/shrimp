@@ -40,14 +40,30 @@ impl GenMove for SmallRequest {
         if !self.board.snakes[id].alive {
             return out;
         }
+
         let possible_moves = array_vec![ [Move;4] =>
             Move::new(crate::makeunmake::Direction::Up,id as u8),
             Move::new(crate::makeunmake::Direction::Right,id as u8),
             Move::new(crate::makeunmake::Direction::Left, id as u8),
             Move::new(crate::makeunmake::Direction::Down,id as u8),
         ];
+
         for mov in possible_moves.iter() {
             let new_pos: Coordinate = self.board.snakes[id].head + mov.direction.into();
+            let new_pos_bb = u128::from(new_pos);
+            let mut all_bb = 0;
+            // add all the snake bodies to the new_pos_bb with making sure that they are alive
+            self.board.snakes.iter().for_each(|x| {
+                if x.alive {
+                    all_bb |= x.head_bb | x.body_bb ^ u128::from(*x.body.last().unwrap())
+                }
+            });
+
+            if all_bb & new_pos_bb == 0 {
+                out.push(*mov);
+                continue;
+            }
+
             let mut removed = false;
             let neck_direction =
                 get_neck_dir(&self.board.snakes[id].head, &self.board.snakes[id].body[1]);
@@ -86,7 +102,7 @@ impl GenMove for SmallRequest {
                     }
                 }
                 None => {
-                    removed = false;
+                    panic!("unreachable");
                 }
             }
             if !removed {

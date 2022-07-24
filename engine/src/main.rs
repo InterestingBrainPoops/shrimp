@@ -2,29 +2,30 @@
 
 #[macro_use]
 extern crate rocket;
-#[macro_use]
-extern crate rocket_contrib;
 
+use std::net::IpAddr;
+use std::str::FromStr;
 use std::time::Instant;
 
 use board::board::GameRequest;
 
 use movegen::genmove::*;
 
-use rocket::config::{Config, Environment};
+use rocket::config::Config;
 use rocket::http::Status;
 use rocket::routes;
-use rocket_contrib::json::{Json, JsonValue};
+use rocket::serde::json::{json, Json, Value};
 use search::search::Search;
+
 #[get("/")]
-fn handle_index() -> JsonValue {
-    return json!({
+fn handle_index() -> Value {
+    json!({
         "apiversion": "1",
         "author": "BrokenKeyboard",
         "color": "#888888",
         "head": "default",
         "tail": "default",
-    });
+    })
 }
 
 #[post("/start", format = "json", data = "<_start_req>")]
@@ -33,10 +34,15 @@ fn handle_start(_start_req: Json<GameRequest>) -> Status {
 }
 
 #[post("/move", format = "json", data = "<move_req>")]
-fn handle_move(move_req: Json<GameRequest>) -> JsonValue {
+fn handle_move(move_req: Json<GameRequest>) -> Value {
     let mut small = move_req.into_small();
     let t0 = Instant::now();
+    let mut thing0 = small.clone();
     let eval = small.minimax(7, i32::MIN, i32::MAX, true, None);
+    thing0.board.food.sort();
+    small.board.food.sort();
+    assert_eq!(thing0.board.food, small.board.food);
+    assert_eq!(thing0.board.snakes, small.board.snakes);
     let t1 = Instant::now();
     let you_moves = small.snake_moves(small.you);
     if you_moves.len() == 1 {
@@ -58,7 +64,7 @@ fn handle_move(move_req: Json<GameRequest>) -> JsonValue {
         move_req.turn, eval.score, eval.direction
     );
 
-    return json!({ "move":  eval.direction.unwrap().to_string()});
+    json!({ "move":  eval.direction.unwrap().to_string()})
 }
 
 #[post("/end", format = "json", data = "<_end_req>")]
@@ -67,20 +73,17 @@ fn handle_end(_end_req: Json<GameRequest>) -> Status {
     Status::Ok
 }
 
-fn main() {
+#[launch]
+fn throngler() -> _ {
     let address = "0.0.0.0";
     let env_port = "8000";
     let port = env_port.parse::<u16>().unwrap();
 
-    let config = Config::build(Environment::Development)
-        .address(address)
-        .port(port)
-        .finalize()
-        .unwrap();
-    rocket::custom(config)
-        .mount(
-            "/",
-            routes![handle_index, handle_start, handle_move, handle_end],
-        )
-        .launch();
+    let mut config = Config::release_default();
+    config.address = IpAddr::from_str(address).unwrap();
+    config.port = port;
+    rocket::build().mount(
+        "/",
+        routes![handle_index, handle_start, handle_move, handle_end],
+    )
 }
