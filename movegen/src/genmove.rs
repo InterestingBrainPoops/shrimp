@@ -47,65 +47,26 @@ impl GenMove for SmallRequest {
             Move::new(crate::makeunmake::Direction::Left, id as u8),
             Move::new(crate::makeunmake::Direction::Down,id as u8),
         ];
-
+        let mut all_bb = 0;
+        // add all the snake bodies to the new_pos_bb with making sure that they are alive
+        self.board.snakes.iter().for_each(|x| {
+            if x.alive {
+                all_bb |= x.head_bb | x.body_bb ^ u128::from(*x.body.last().unwrap())
+            }
+        });
         for mov in possible_moves.iter() {
             let new_pos: Coordinate = self.board.snakes[id].head + mov.direction.into();
+            if new_pos.x >= self.board.width as i32
+                || new_pos.x < 0
+                || new_pos.y >= self.board.height as i32
+                || new_pos.y < 0
+            {
+                continue;
+            } // remove if the head is out of bounds
+
             let new_pos_bb = u128::from(new_pos);
-            let mut all_bb = 0;
-            // add all the snake bodies to the new_pos_bb with making sure that they are alive
-            self.board.snakes.iter().for_each(|x| {
-                if x.alive {
-                    all_bb |= x.head_bb | x.body_bb ^ u128::from(*x.body.last().unwrap())
-                }
-            });
 
             if all_bb & new_pos_bb == 0 {
-                out.push(*mov);
-                continue;
-            }
-
-            let mut removed = false;
-            let neck_direction =
-                get_neck_dir(&self.board.snakes[id].head, &self.board.snakes[id].body[1]);
-            match neck_direction {
-                Some(neck_direction_actual) => {
-                    if neck_direction_actual == mov.direction {
-                        removed = true;
-                    } else {
-                        for snake in &self.board.snakes {
-                            if !snake.alive {
-                                continue;
-                            } // move on if the other snake is dead
-                            if new_pos.x >= self.board.width as i32
-                                || new_pos.x < 0
-                                || new_pos.y >= self.board.height as i32
-                                || new_pos.y < 0
-                            {
-                                removed = true;
-                                break;
-                            } // remove if the head is out of bounds
-                            if snake.id != mov.id
-                                && snake.head == new_pos
-                                && snake.length >= self.board.snakes[id].length
-                            {
-                                removed = true;
-                                break;
-                            } // remove the move if the head is the same as the new head pos, and the other length is bigger or equal to my length
-                            if (snake.body_bb & !(u128::from(*snake.body.last().unwrap())))
-                                & u128::from(new_pos)
-                                != 0
-                            {
-                                removed = true;
-                                break;
-                            } // remove if the head is in the other snake
-                        }
-                    }
-                }
-                None => {
-                    panic!("unreachable");
-                }
-            }
-            if !removed {
                 out.push(*mov);
             }
         }

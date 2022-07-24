@@ -82,7 +82,8 @@ impl Helpers for SmallRequest {
             snake.body_bb ^= u128::from(snake.body[snake.length as usize - 1]);
 
             // add in the new tail
-            snake.body_bb |= u128::from(snake.body[snake.length as usize - 2]);
+            // TODO: Look into this and see if its actually supposed to be 1. cause this seems like a useless op
+            snake.body_bb |= u128::from(snake.body[snake.length as usize - 1]);
 
             // update the turn delta
             delta.tails.push((
@@ -281,20 +282,19 @@ impl MakeUnmake for SmallRequest {
         // unmove snakes
         for snake in &mut self.board.snakes {
             if snake.alive {
-                // remove the old head
                 snake.body.remove(0);
-                // set the new head
                 snake.head = snake.body[0];
-                // update the head_bb
-                snake.head_bb ^= u128::from(snake.head) | snake.head_bb;
+                snake.head_bb = u128::from(snake.head);
             }
         }
-
         for (id, tail) in &delta.tails {
-            // add the old tail back
             self.board.snakes[*id as usize].body.push(*tail);
-            // add the old tail back to the bb
-            self.board.snakes[*id as usize].body_bb |= u128::from(*tail);
+        }
+        for snake in &mut self.board.snakes {
+            if snake.alive {
+                snake.body_bb ^= snake.head_bb;
+                snake.body_bb |= u128::from(snake.body[snake.length as usize - 1]);
+            }
         }
     }
 }
